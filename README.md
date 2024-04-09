@@ -40,10 +40,10 @@ import ch.sbb.rssched.client.config.RsschedRequestConfig;
 public class Example {
 
     public static void main(String[] args) {
-        RsschedRequestConfig config = RsschedRequestConfig.builder().
-                setInputDirectory("path/to/input/directory")
-                .setOutputDirectory("path/to/output/directory").
-                setRunId("runId")
+        RsschedRequestConfig config = RsschedRequestConfig.builder()
+                .setInputDirectory("path/to/input/directory")
+                .setOutputDirectory("path/to/output/directory")
+                .setRunId("runId")
                 // optionally set transit line filter, default is no filtering
                 .setFilterStrategy(scenario -> {
                     // implementation...
