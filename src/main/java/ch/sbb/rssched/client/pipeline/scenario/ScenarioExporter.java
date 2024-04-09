@@ -43,6 +43,6 @@ class ScenarioExporter implements ResultSink<ScenarioPipe> {
                 directoryUtil.buildFilePath(TRANSIT_SCHEDULE_FILE));
         new MatsimVehicleWriter(scenario.getTransitVehicles()).writeFile(
                 directoryUtil.buildFilePath(TRANSIT_VEHICLES_FILE));
-        log.info("Processed scenario successfully exported to: " + directoryUtil.getPath());
+        log.info("Processed scenario successfully exported to: {}", directoryUtil.getPath());
     }
 }
