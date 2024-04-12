@@ -15,6 +15,7 @@ import org.matsim.core.api.experimental.events.VehicleArrivesAtFacilityEvent;
 import org.matsim.core.api.experimental.events.VehicleDepartsAtFacilityEvent;
 import org.matsim.core.api.experimental.events.handler.VehicleArrivesAtFacilityEventHandler;
 import org.matsim.core.api.experimental.events.handler.VehicleDepartsAtFacilityEventHandler;
+import org.matsim.core.config.ConfigGroup;
 import org.matsim.core.utils.misc.Time;
 import org.matsim.pt.transitSchedule.api.Departure;
 import org.matsim.pt.transitSchedule.api.TransitLine;
@@ -61,8 +62,28 @@ public class EventAnalysis implements TransitDriverStartsEventHandler, VehicleDe
         this.scenario = scenario;
         this.transitLineIds = transitLineIds;
         this.seatDurationThreshold = seatDurationThreshold;
-        this.sampleSizeFactor = 1 / Double.parseDouble(
-                scenario.getConfig().getModules().get("PostProcessing").getParams().get("simulationSampleSize"));
+        this.sampleSizeFactor = getSampleSizeFactor(scenario);
+    }
+
+    private static double getSampleSizeFactor(Scenario scenario) {
+
+        ConfigGroup postProcessingConfigGroup = scenario.getConfig().getModules().get("PostProcessing");
+        if (postProcessingConfigGroup != null) {
+            double factor = 1 / Double.parseDouble(postProcessingConfigGroup.getParams().get("simulationSampleSize"));
+            log.info("Setting sampleSizeFactor to {} from postprocessing config group", factor);
+            return factor;
+        }
+
+        ConfigGroup simWrapperConfigGroup = scenario.getConfig().getModules().get("simwrapper");
+        if (simWrapperConfigGroup != null) {
+            double factor = 1 / Double.parseDouble(
+                    (String) simWrapperConfigGroup.getParameterSets("params").toArray()[3]);
+            log.info("Setting sampleSizeFactor to {} from simwrapper config group", factor);
+            return factor;
+        }
+
+        log.warn("No sampleSizeFactor found in config, setting factor to 1.0 and skip correction");
+        return 1;
     }
 
     @Override
