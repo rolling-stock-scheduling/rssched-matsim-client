@@ -18,12 +18,12 @@ public class PassengerPipeline extends Pipeline<PassengerPipe> {
      * @param outputDirectory the output directory to export the processed scenario files
      * @param filterStrategy  the filter strategy for filtering transit lines
      */
-    public PassengerPipeline(String runId, String inputDirectory, String outputDirectory, FilterStrategy filterStrategy, int seatDurationThreshold) {
+    public PassengerPipeline(String runId, String inputDirectory, String outputDirectory, FilterStrategy filterStrategy, double sampleSize, int seatDurationThreshold) {
         // set source
         super(new EventSource(runId, inputDirectory));
         // add filters
         addFilter(new TransitLineFilter(filterStrategy));
-        addFilter(new EventAnalysisFilter(seatDurationThreshold));
+        addFilter(new EventAnalysisFilter(sampleSize, seatDurationThreshold));
         // add sink
         addSink(new PassengerCSVWriter(outputDirectory));
     }

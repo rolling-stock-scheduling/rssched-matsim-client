@@ -50,6 +50,9 @@ public class Example {
                     return null;
                 }).buildWithDefaults();
 
+        // optionally set sample size factor, default is 1.0
+        config.getGlobal().setSampleSize(0.25);
+
         RsschedMatsimClient client = new RsschedMatsimClient("localhost", 3000);
 
         client.process(config);
@@ -57,6 +60,8 @@ public class Example {
 
 }
 ```
+
+**Note:** There is a hard limit of 500 locations per instance, since the deadhead trip matrix grows exponentially.
 
 ---
 

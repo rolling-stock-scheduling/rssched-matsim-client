@@ -128,6 +128,11 @@ public class RsschedRequestConfig {
         private FilterStrategy filterStrategy = new NoFilterStrategy();
 
         /**
+         * The sample size of the run, needed to scale to 100% for the demand.
+         */
+        private double sampleSize = 1.0;
+
+        /**
          * Speed limit used in the routing for deadhead trips
          */
         private double deadHeadTripSpeedLimit = 90 * 3.6;
