@@ -97,8 +97,8 @@ public class RsschedRequestConfig {
             return this;
         }
 
-        public Builder addMaintenanceSlot(String id, String locationId, LocalDateTime start, LocalDateTime end) {
-            Maintenance.Slot slot = new Maintenance.Slot(id, locationId, start, end);
+        public Builder addMaintenanceSlot(String id, String locationId, LocalDateTime start, LocalDateTime end, int trackCount) {
+            Maintenance.Slot slot = new Maintenance.Slot(id, locationId, start, end, trackCount);
             config.maintenance.slots.add(slot);
             return this;
         }
@@ -238,7 +238,7 @@ public class RsschedRequestConfig {
          */
         private int maximalDistance = 15000 * 1000;
 
-        public record Slot(String id, String locationId, LocalDateTime start, LocalDateTime end) {
+        public record Slot(String id, String locationId, LocalDateTime start, LocalDateTime end, int trackCount) {
         }
     }
 

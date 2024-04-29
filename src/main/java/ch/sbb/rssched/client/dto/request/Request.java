@@ -137,9 +137,10 @@ public interface Request {
          * @param locationId the id of the location, the maintenance takes places
          * @param start      the start time of the slot
          * @param end        the end time of the slot
+         * @param trackCount the number of tracks of the slot
          * @return the Builder instance
          */
-        Builder addMaintenanceSlot(String id, String locationId, LocalDateTime start, LocalDateTime end);
+        Builder addMaintenanceSlot(String id, String locationId, LocalDateTime start, LocalDateTime end, int trackCount);
 
         /**
          * Adds a deadhead trip (empty vehicle movement) to the scheduler request.

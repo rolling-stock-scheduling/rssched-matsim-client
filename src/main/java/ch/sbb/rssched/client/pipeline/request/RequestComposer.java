@@ -279,7 +279,7 @@ public class RequestComposer implements Filter<RequestPipe> {
 
     private void addMaintenanceSlots(Request.Builder builder) {
         for (RsschedRequestConfig.Maintenance.Slot slot : config.getMaintenance().getSlots()) {
-            builder.addMaintenanceSlot(slot.id(), slot.locationId(), slot.start(), slot.end());
+            builder.addMaintenanceSlot(slot.id(), slot.locationId(), slot.start(), slot.end(), slot.trackCount());
         }
     }
 
