@@ -85,7 +85,7 @@ class RsschedMatsimClientIT {
 
         // set sample size
         RsschedRequestConfig config = builder.buildWithDefaults();
-        config.getGlobal().setSampleSize(0.01);
+        config.getGlobal().setSampleSize(0.25);
 
         // do not create depots at terminal locations
         config.getDepot().setCreateAtTerminalLocations(false);

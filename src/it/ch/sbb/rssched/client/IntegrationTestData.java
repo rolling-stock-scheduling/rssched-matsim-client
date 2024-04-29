@@ -13,11 +13,11 @@ import java.net.URL;
 @Log4j2
 public class IntegrationTestData {
 
-    public static final String IT_INPUT_DIRECTORY = "integration-test/input/de/kelheim/kelheim-v3.0/1pct/";
-    public static final String IT_OUTPUT_DIRECTORY = "integration-test/output/de/kelheim/kelheim-v3.0/1pct/";
-    public static final String RUN_ID = "kelheim-v3.0-1pct";
-    private static final String BASE_URL = "https://svn.vsp.tu-berlin.de/repos/public-svn/matsim/scenarios/countries/de/kelheim/kelheim-v3.0/output/1pct/";
-    private static final String[] FILE_NAMES = {"kelheim-v3.0-1pct.output_events.xml.gz", "kelheim-v3.0-1pct.output_network.xml.gz", "kelheim-v3.0-1pct.output_transitSchedule.xml.gz", "kelheim-v3.0-1pct.output_transitVehicles.xml.gz", "kelheim-v3.0-1pct.output_config.xml"};
+    public static final String IT_INPUT_DIRECTORY = "integration-test/input/de/kelheim/kelheim-v3.0/25pct/";
+    public static final String IT_OUTPUT_DIRECTORY = "integration-test/output/de/kelheim/kelheim-v3.0/25pct/";
+    public static final String RUN_ID = "kelheim-v3.0-25pct";
+    private static final String BASE_URL = "https://svn.vsp.tu-berlin.de/repos/public-svn/matsim/scenarios/countries/de/kelheim/kelheim-v3.0/output/25pct/";
+    private static final String[] FILE_NAMES = {"kelheim-v3.0-25pct.output_events.xml.gz", "kelheim-v3.0-25pct.output_network.xml.gz", "kelheim-v3.0-25pct.output_transitSchedule.xml.gz", "kelheim-v3.0-25pct.output_transitVehicles.xml.gz", "kelheim-v3.0-25pct.output_config.xml"};
     private final boolean overwrite;
 
     public void setup() throws IOException {
