@@ -174,14 +174,14 @@ class RequestBuilderImpl implements Request.Builder {
     }
 
     @Override
-    public Request.Builder addMaintenanceSlot(String id, String locationId, LocalDateTime start, LocalDateTime end) {
+    public Request.Builder addMaintenanceSlot(String id, String locationId, LocalDateTime start, LocalDateTime end, int trackCount) {
         if (maintenanceSlots.containsKey(id)) {
             throw new IllegalArgumentException("Maintenance slot with ID " + id + " already exists.");
         }
         if (!locations.containsKey(locationId)) {
             throw new IllegalArgumentException("Location " + locationId + " does not exist.");
         }
-        maintenanceSlots.put(id, new MaintenanceSlot(id, locationId, start.withNano(0), end.withNano(0)));
+        maintenanceSlots.put(id, new MaintenanceSlot(id, locationId, start.withNano(0), end.withNano(0), trackCount));
         return this;
     }
 

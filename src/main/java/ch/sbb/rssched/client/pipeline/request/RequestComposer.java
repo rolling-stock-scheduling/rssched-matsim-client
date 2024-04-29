@@ -37,18 +37,19 @@ import java.util.Set;
 @Log4j2
 @RequiredArgsConstructor
 public class RequestComposer implements Filter<RequestPipe> {
-    private final Map<TransitStopFacility, Boolean> locations = new HashMap<>();
+    public static final int LOCATION_SIZE_LIMIT = 500;
+    private final Map<Id<TransitStopFacility>, Boolean> locations = new HashMap<>();
     private final Set<String> departuresIds = new HashSet<>();
     private final Map<TransitStopFacility, Set<VehicleType>> depots = new HashMap<>();
 
     private final RsschedRequestConfig config;
 
-    private static void addVehicleTypes(Request.Builder builder, Scenario scenario) {
+    private void addVehicleTypes(Request.Builder builder, Scenario scenario) {
         scenario.getTransitVehicles().getVehicleTypes().forEach(
                 (vehicleTypeId, vehicleType) -> builder.addVehicleType(vehicleTypeId.toString(),
                         vehicleType.getCapacity().getSeats(),
                         vehicleType.getCapacity().getSeats() + vehicleType.getCapacity().getStandingRoom(),
-                        (int) Math.round(vehicleType.getLength())));
+                        config.getShunting().getDefaultMaximalFormationCount()));
     }
 
     private static LocalDateTime toLocalDateTime(double secondsAfterMidnight) {
@@ -171,6 +172,16 @@ public class RequestComposer implements Filter<RequestPipe> {
         // compose
         addVehicleTypes(builder, scenario);
         addTransitLines(builder, scenario, pipe.getPassengers());
+        if (config.getDepot().isCreateAtTerminalLocations()) {
+            if (!config.getDepot().getCapacities().isEmpty()) {
+                log.warn("Specific depots (n = {}) from request config are ignored, since createAtTerminalLocations is set to true",
+                        config.getDepot().getCapacities().size());
+            }
+        } else {
+            // only add specific depots from list if automated depot at terminal creation is deactivated.
+            // Otherwise, specific depots from config are ignored.
+            addDepotsFromConfig(builder);
+        }
         addMaintenanceSlots(builder);
         addDeadHeadTrips(builder, scenario);
         setParameters(builder);
@@ -208,7 +219,7 @@ public class RequestComposer implements Filter<RequestPipe> {
         // add intermediate locations and route segments
         for (int i = 0; i < segments.size(); i++) {
             Segment segment = segments.get(i);
-            log.info("Adding segment {} - {} on {}", segment.origin, segment.destination, transitRoute);
+            log.debug("Adding segment {} - {} on {}", segment.origin, segment.destination, transitRoute);
             String segmentId = String.format("%s_%d", transitRoute.getId(), i);
             // add intermediate location
             addLocation(builder, segment.origin.getStopFacility());
@@ -254,15 +265,15 @@ public class RequestComposer implements Filter<RequestPipe> {
 
     private void addLocation(Request.Builder builder, TransitStopFacility facility) {
         String facilityId = facility.getId().toString();
-        if (!locations.containsKey(facility)) {
+        if (!locations.containsKey(facility.getId())) {
             builder.addLocation(facilityId);
-            locations.put(facility, false);
+            locations.put(facility.getId(), false);
         }
     }
 
     private void addDepot(Request.Builder builder, TransitStopFacility facility) {
         String facilityId = facility.getId().toString();
-        Boolean existingDepot = locations.get(facility);
+        Boolean existingDepot = locations.get(facility.getId());
 
         if (existingDepot == null) {
             throw new IllegalArgumentException("Location " + facilityId + "not found.");
@@ -271,26 +282,43 @@ public class RequestComposer implements Filter<RequestPipe> {
         if (!existingDepot) {
             String depotId = config.getDepot().getDefaultIdPrefix() + facility.getId().toString();
             builder.addDepot(depotId, facilityId, config.getDepot().getDefaultCapacity());
-            locations.put(facility, true);
+            locations.put(facility.getId(), true);
         } else {
             log.debug("A depot already exists at location {} - Skipping", facilityId);
         }
     }
 
+    private void addDepotsFromConfig(Request.Builder builder) {
+        for (RsschedRequestConfig.Depot.Facility capacity : config.getDepot().getCapacities()) {
+            builder.addDepot(capacity.id(), capacity.locationId(), capacity.capacity());
+            for (RsschedRequestConfig.Depot.AllowedType allowedType : capacity.allowedTypes()) {
+                builder.addVehicleTypeToDepot(capacity.id(), allowedType.vehicleType(), allowedType.capacity());
+            }
+        }
+    }
+
     private void addMaintenanceSlots(Request.Builder builder) {
         for (RsschedRequestConfig.Maintenance.Slot slot : config.getMaintenance().getSlots()) {
-            builder.addMaintenanceSlot(slot.id(), slot.locationId(), slot.start(), slot.end());
+            builder.addMaintenanceSlot(slot.id(), slot.locationId(), slot.start(), slot.end(), slot.trackCount());
         }
     }
 
     private void addDeadHeadTrips(Request.Builder builder, Scenario scenario) {
+        if (locations.keySet().size() > LOCATION_SIZE_LIMIT) {
+            throw new IllegalStateException(
+                    "Instance is to big for creating deadhead trip matrix, there have to be less than " + LOCATION_SIZE_LIMIT + " locations.");
+        }
+        log.info("Creating dead head trip matrix ({}x{}={})", locations.keySet().size(), locations.keySet().size(),
+                locations.keySet().size() * locations.keySet().size());
         TrainNetworkRouter trainNetworkRouter = new TrainNetworkRouter(scenario.getNetwork(),
                 config.getGlobal().getDeadHeadTripSpeedLimit());
-        locations.keySet().forEach(origin -> locations.keySet().forEach(destination -> {
-            if (!origin.equals(destination)) {
-                var pathResult = trainNetworkRouter.calculate(origin, destination);
-                builder.addDeadHeadTrip(origin.getId().toString(), destination.getId().toString(),
-                        pathResult.duration(), pathResult.distance());
+        locations.keySet().forEach(originId -> locations.keySet().forEach(destinationId -> {
+            if (!originId.equals(destinationId)) {
+                var pathResult = trainNetworkRouter.calculate(
+                        scenario.getTransitSchedule().getFacilities().get(originId),
+                        scenario.getTransitSchedule().getFacilities().get(destinationId));
+                builder.addDeadHeadTrip(originId.toString(), destinationId.toString(), pathResult.duration(),
+                        pathResult.distance());
             }
         }));
     }

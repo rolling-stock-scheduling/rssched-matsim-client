@@ -15,9 +15,11 @@ import org.matsim.core.events.handler.EventHandler;
 @Log4j2
 class EventAnalysisFilter implements Filter<PassengerPipe> {
 
+    private final double sampleSizeFactor;
     private final int seatDurationThreshold;
 
-    EventAnalysisFilter(int seatDurationThreshold) {
+    public EventAnalysisFilter(double sampleSize, int seatDurationThreshold) {
+        this.sampleSizeFactor = 1 / sampleSize;
         this.seatDurationThreshold = seatDurationThreshold;
     }
 
@@ -31,8 +33,10 @@ class EventAnalysisFilter implements Filter<PassengerPipe> {
 
     @Override
     public void apply(PassengerPipe pipe) {
-        log.info("Starting event analysis for simulation run {}", pipe.runId());
-        var passengerEventAnalysis = new EventAnalysis(pipe.scenario(), pipe.transitLineIds(), seatDurationThreshold);
+        log.info("Starting event analysis for simulation run {} with sample size factor x{}", pipe.runId(),
+                sampleSizeFactor);
+        var passengerEventAnalysis = new EventAnalysis(pipe.scenario(), pipe.transitLineIds(), sampleSizeFactor,
+                seatDurationThreshold);
         runEventAnalysis(pipe.eventsFile(), passengerEventAnalysis);
         pipe.entries().addAll(passengerEventAnalysis.getEntries());
     }

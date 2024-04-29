@@ -97,8 +97,8 @@ public class RsschedRequestConfig {
             return this;
         }
 
-        public Builder addMaintenanceSlot(String id, String locationId, LocalDateTime start, LocalDateTime end) {
-            Maintenance.Slot slot = new Maintenance.Slot(id, locationId, start, end);
+        public Builder addMaintenanceSlot(String id, String locationId, LocalDateTime start, LocalDateTime end, int trackCount) {
+            Maintenance.Slot slot = new Maintenance.Slot(id, locationId, start, end, trackCount);
             config.maintenance.slots.add(slot);
             return this;
         }
@@ -126,6 +126,11 @@ public class RsschedRequestConfig {
          * The filter strategy to filter transit lines of interest, default is no filter.
          */
         private FilterStrategy filterStrategy = new NoFilterStrategy();
+
+        /**
+         * The sample size of the run, needed to scale to 100% for the demand.
+         */
+        private double sampleSize = 1.0;
 
         /**
          * Speed limit used in the routing for deadhead trips
@@ -238,7 +243,7 @@ public class RsschedRequestConfig {
          */
         private int maximalDistance = 15000 * 1000;
 
-        public record Slot(String id, String locationId, LocalDateTime start, LocalDateTime end) {
+        public record Slot(String id, String locationId, LocalDateTime start, LocalDateTime end, int trackCount) {
         }
     }
 

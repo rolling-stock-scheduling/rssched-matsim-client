@@ -30,9 +30,9 @@ public class ScenarioLoader {
     public Scenario load(boolean includeNetwork) {
         log.info("Loading scenario {}", runId);
         String configFile = buildPath(CONFIG_FILE);
-        String networkFile = includeNetwork ? buildPath(NETWORK_FILE) : null;
-        String scheduleFile = buildPath(TRANSIT_SCHEDULE_FILE);
-        String vehiclesFile = buildPath(TRANSIT_VEHICLES_FILE);
+        String networkFile = includeNetwork ? buildRelativeFileName(NETWORK_FILE) : null;
+        String scheduleFile = buildRelativeFileName(TRANSIT_SCHEDULE_FILE);
+        String vehiclesFile = buildRelativeFileName(TRANSIT_VEHICLES_FILE);
         Config config = ConfigUtils.loadConfig(configFile);
         config.plans().setInputFile(null);
         config.facilities().setInputFile(null);
@@ -49,7 +49,15 @@ public class ScenarioLoader {
     }
 
     private String buildPath(String fileType) {
-        return String.format("%s/output_%s/%s.%s", inputFolder, runId, runId, fileType);
+        if (inputFolder.endsWith("/")) {
+            return String.format("%s%s.%s", inputFolder, runId, fileType);
+        } else {
+            return String.format("%s/%s.%s", inputFolder, runId, fileType);
+        }
+    }
+
+    private String buildRelativeFileName(String fileType) {
+            return String.format("%s.%s", runId, fileType);
     }
 
 }

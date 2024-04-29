@@ -14,6 +14,7 @@ class RequestTest {
     private final static LocalDateTime MAINTENANCE_DAY_END = LocalDateTime.of(2020, 1, 1, 16, 0, 0);
     private final static LocalDateTime MAINTENANCE_NIGHT_START = LocalDateTime.of(2020, 1, 1, 20, 0, 0);
     private final static LocalDateTime MAINTENANCE_NIGHT_END = LocalDateTime.of(2020, 1, 2, 4, 0, 0);
+    private final static int MAINTENANCE_TRACK_COUNT = 3;
 
     private Request.Builder requestBuilder;
 
@@ -65,11 +66,9 @@ class RequestTest {
                 .addSegmentToDeparture("departureSegment9", "departure6", "routeSegment3",
                         DAY_START.plusMinutes(25).plusSeconds(1380), 70, 70)
                 .addMaintenanceSlot("maintenance1", "loc2", MAINTENANCE_DAY_START,
-                        MAINTENANCE_DAY_END)
-                .addMaintenanceSlot("maintenance2", "loc2", MAINTENANCE_DAY_START,
-                        MAINTENANCE_DAY_END)
-                .addMaintenanceSlot("maintenance3", "loc2", MAINTENANCE_NIGHT_START,
-                        MAINTENANCE_NIGHT_END)
+                        MAINTENANCE_DAY_END, MAINTENANCE_TRACK_COUNT)
+                .addMaintenanceSlot("maintenance2", "loc2", MAINTENANCE_NIGHT_START,
+                        MAINTENANCE_NIGHT_END, MAINTENANCE_TRACK_COUNT)
                 .addDeadHeadTrip("loc1", "loc2", 600, 1000)
                 .addDeadHeadTrip("loc2", "loc1", 6000, 10000)
                 .addDeadHeadTrip("loc1", "loc3", 300, 500)

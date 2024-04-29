@@ -57,12 +57,11 @@ public class EventAnalysis implements TransitDriverStartsEventHandler, VehicleDe
      * @param scenario       The scenario representing the simulation run.
      * @param transitLineIds The set of transit line IDs to consider for passenger analysis.
      */
-    EventAnalysis(Scenario scenario, Set<Id<TransitLine>> transitLineIds, int seatDurationThreshold) {
+    EventAnalysis(Scenario scenario, Set<Id<TransitLine>> transitLineIds, double sampleSizeFactor, int seatDurationThreshold) {
         this.scenario = scenario;
         this.transitLineIds = transitLineIds;
         this.seatDurationThreshold = seatDurationThreshold;
-        this.sampleSizeFactor = 1 / Double.parseDouble(
-                scenario.getConfig().getModules().get("PostProcessing").getParams().get("simulationSampleSize"));
+        this.sampleSizeFactor = sampleSizeFactor;
     }
 
     @Override

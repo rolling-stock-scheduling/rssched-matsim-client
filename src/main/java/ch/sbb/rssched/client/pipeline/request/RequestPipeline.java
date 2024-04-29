@@ -27,7 +27,8 @@ public class RequestPipeline extends Pipeline<RequestPipe> {
                 new ScenarioPipeline(config.getRunId(), config.getInputDirectory(), config.getOutputDirectory(),
                         config.getGlobal().getFilterStrategy()),
                 new PassengerPipeline(config.getRunId(), config.getInputDirectory(), config.getOutputDirectory(),
-                        config.getGlobal().getFilterStrategy(), config.getGlobal().getSeatDurationThreshold())));
+                        config.getGlobal().getFilterStrategy(), config.getGlobal().getSampleSize(),
+                        config.getGlobal().getSeatDurationThreshold())));
         // add filter
         addFilter(new RequestComposer(config));
         // add sink
