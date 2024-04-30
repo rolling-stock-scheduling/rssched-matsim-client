@@ -7,17 +7,20 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Set;
 
 import static ch.sbb.rssched.client.IntegrationTestData.*;
 
 class RsschedMatsimClientIT {
 
-    public static final LocalDateTime DAY_SHIFT_START = LocalDateTime.of(2020, 1, 1, 8, 0, 0);
-    public static final LocalDateTime DAY_SHIFT_END = LocalDateTime.of(2020, 1, 1, 16, 0, 0);
-    public static final LocalDateTime NIGHT_SHIFT_START = LocalDateTime.of(2020, 1, 1, 20, 0, 0);
-    public static final LocalDateTime NIGHT_SHIFT_END = LocalDateTime.of(2020, 1, 2, 4, 0, 0);
+    public static final LocalDateTime DAY_SHIFT_START = LocalDateTime.of(LocalDate.now(), LocalTime.of(8, 0, 0));
+    public static final LocalDateTime DAY_SHIFT_END = LocalDateTime.of(LocalDate.now(), LocalTime.of(16, 0, 0));
+    public static final LocalDateTime NIGHT_SHIFT_START = LocalDateTime.of(LocalDate.now(), LocalTime.of(20, 0, 0));
+    public static final LocalDateTime NIGHT_SHIFT_END = LocalDateTime.of(LocalDate.now().plusDays(1),
+            LocalTime.of(4, 0, 0));
     public static final int DEPOT_CAPACITY = 10;
     public static final int MAINTENANCE_TRACK_COUNT = 3;
     private final Set<String> STOPS_IN_KEHLHEIM = Set.of("short_10302.5", "regio_275062", "short_10302.6",
