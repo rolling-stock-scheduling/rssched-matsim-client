@@ -30,8 +30,8 @@ class RsschedMatsimClientIT {
             "regio_289114.1", "regio_289114.3", "regio_185728");
     private final Set<String> ON_ROUTE_SHUNTING_LOCATIONS = Set.of("regio_141134", "regio_166759", "regio_314854",
             "regio_215502", "short_1119", "short_6474", "short_5972", "short_9804");
-    private final Set<String> DEPOT_LOCATIONS = Set.of("regio_141134", "regio_151384", "regio_172317", "regio_215502",
-            "regio_293170", "short_1119", "short_3740", "short_5972", "short_6900");
+    private final Set<String> DEPOT_LOCATIONS = Set.of("regio_141134", "regio_145538", "regio_147682", "regio_151384",
+            "regio_172317", "regio_215502", "regio_293170", "short_1119", "short_3740", "short_5972", "short_6900");
     private final Set<String> MAINTENANCE_LOCATIONS = Set.of("regio_67809", "regio_81147", "regio_293170", "short_9666",
             "short_9804", "short_1119");
 
