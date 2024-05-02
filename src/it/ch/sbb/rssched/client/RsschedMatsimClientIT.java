@@ -18,13 +18,16 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class RsschedMatsimClientIT {
 
-    public static final LocalDateTime DAY_SHIFT_START = LocalDateTime.of(LocalDate.now(), LocalTime.of(8, 0, 0));
-    public static final LocalDateTime DAY_SHIFT_END = LocalDateTime.of(LocalDate.now(), LocalTime.of(16, 0, 0));
-    public static final LocalDateTime NIGHT_SHIFT_START = LocalDateTime.of(LocalDate.now(), LocalTime.of(20, 0, 0));
-    public static final LocalDateTime NIGHT_SHIFT_END = LocalDateTime.of(LocalDate.now().plusDays(1),
+    private static final String SCHEDULER_BASE_URL = "http://localhost";
+    private static final int SCHEDULER_PORT = 3000;
+
+    private static final LocalDateTime DAY_SHIFT_START = LocalDateTime.of(LocalDate.now(), LocalTime.of(8, 0, 0));
+    private static final LocalDateTime DAY_SHIFT_END = LocalDateTime.of(LocalDate.now(), LocalTime.of(16, 0, 0));
+    private static final LocalDateTime NIGHT_SHIFT_START = LocalDateTime.of(LocalDate.now(), LocalTime.of(20, 0, 0));
+    private static final LocalDateTime NIGHT_SHIFT_END = LocalDateTime.of(LocalDate.now().plusDays(1),
             LocalTime.of(4, 0, 0));
-    public static final int DEPOT_CAPACITY = 10;
-    public static final int MAINTENANCE_TRACK_COUNT = 3;
+    private static final int DEPOT_CAPACITY = 10;
+    private static final int MAINTENANCE_TRACK_COUNT = 3;
     private final Set<String> STOPS_IN_KEHLHEIM = Set.of("short_10302.5", "regio_275062", "short_10302.6",
             "regio_289114.2", "regio_289114.4", "regio_92976", "short_10302.3", "short_10302.4", "regio_275062.1",
             "short_9488", "short_10302.1", "short_10302.2", "short_9488.1", "short_9488.4", "short_9488.5",
@@ -96,7 +99,7 @@ class RsschedMatsimClientIT {
         config.getDepot().setCreateAtTerminalLocations(false);
 
         // process
-        RsschedMatsimClient client = new RsschedMatsimClient("http://localhost", 3000);
+        RsschedMatsimClient client = new RsschedMatsimClient(SCHEDULER_BASE_URL, SCHEDULER_PORT);
         Response response = client.process(config);
 
         assertNotNull(response);
