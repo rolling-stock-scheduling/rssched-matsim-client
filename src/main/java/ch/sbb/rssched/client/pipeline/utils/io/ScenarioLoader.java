@@ -57,7 +57,7 @@ public class ScenarioLoader {
     }
 
     private String buildRelativeFileName(String fileType) {
-            return String.format("%s.%s", runId, fileType);
+        return String.format("%s.%s", runId, fileType);
     }
 
 }

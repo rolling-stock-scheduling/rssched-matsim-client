@@ -1,0 +1,13 @@
+services:
+  rssched-scheduler:
+    build: ./../eth_sbb_rolling_stock_scheduling
+    ports:
+      - "3000:3000"
+    environment:
+      - RAYON_NUM_THREADS=16
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:3000/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
