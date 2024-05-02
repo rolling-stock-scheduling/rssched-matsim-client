@@ -41,7 +41,7 @@ public class RequestSender implements Filter<RequestPipe> {
                 objectMapper.registerModule(new JavaTimeModule());
                 Response response = objectMapper.readValue(httpResponse.body(), Response.class);
                 pipe.setResponse(response);
-                log.info("Successfully parsed the response.");
+                log.info("Successfully parsed the response: {}", response.getInfo());
             } else {
                 throw new IOException("Received response: Status Code = " + httpResponse.statusCode());
             }
