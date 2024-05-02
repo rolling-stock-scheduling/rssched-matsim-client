@@ -8,27 +8,28 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 /**
- * Request JSON writer
+ * Response JSON writer
  * <p>
- * Writes the scheduler request to a JSON file in the specified output directory.
+ * Writes the scheduler response to a JSON file in the specified output directory.
  *
  * @author munterfi
  */
 @Log4j2
-public class RequestJSONWriter implements ResultSink<RequestPipe> {
-    private static final String REQUEST_FILE_NAME = "scheduler_request.json";
+public class ResponseJSONWriter implements ResultSink<RequestPipe> {
+    private static final String RESPONSE_FILE_NAME = "scheduler_response.json";
     private final String outputDirectory;
 
-    public RequestJSONWriter(String outputDirectory) {
+    public ResponseJSONWriter(String outputDirectory) {
         this.outputDirectory = outputDirectory;
     }
 
     @Override
     public void process(RequestPipe pipe) {
-        String filePath = new OutputDirectoryManager(outputDirectory, pipe.getRunId()).buildFilePath(REQUEST_FILE_NAME);
-        log.info("Exporting request JSON to {}", filePath);
+        String filePath = new OutputDirectoryManager(outputDirectory, pipe.getRunId()).buildFilePath(
+                RESPONSE_FILE_NAME);
+        log.info("Exporting response JSON to {}", filePath);
         try (FileWriter fileWriter = new FileWriter(filePath)) {
-            fileWriter.write(pipe.getRequest().toJSON());
+            fileWriter.write(pipe.getResponse().toJSON());
         } catch (IOException e) {
             throw new RuntimeException("Error writing the JSON file: " + e.getMessage(), e);
         }

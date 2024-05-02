@@ -12,7 +12,7 @@ import java.io.File;
  */
 @Log4j2
 public class OutputDirectoryManager {
-    private static final String DIRECTORY_PREFIX = "rep";
+    private static final String DIRECTORY_PREFIX = "rssched";
     @Getter
     private final String path;
     private final String runId;

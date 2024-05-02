@@ -36,6 +36,7 @@ configure it. Optionally implement a transit line filter strategy.
 ```java
 import ch.sbb.rssched.client.RsschedMatsimClient;
 import ch.sbb.rssched.client.config.RsschedRequestConfig;
+import ch.sbb.rssched.client.dto.response.Response;
 
 public class Example {
 
@@ -55,7 +56,7 @@ public class Example {
 
         RsschedMatsimClient client = new RsschedMatsimClient("localhost", 3000);
 
-        client.process(config);
+        Response response = client.process(config);
     }
 
 }

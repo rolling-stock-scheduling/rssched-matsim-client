@@ -3,6 +3,7 @@ package ch.sbb.rssched.client;
 import ch.sbb.rssched.client.config.RsschedRequestConfig;
 import ch.sbb.rssched.client.config.selection.FilterStrategy;
 import ch.sbb.rssched.client.config.selection.TransitLineSelection;
+import ch.sbb.rssched.client.dto.response.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -13,6 +14,7 @@ import java.time.LocalTime;
 import java.util.Set;
 
 import static ch.sbb.rssched.client.IntegrationTestData.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class RsschedMatsimClientIT {
 
@@ -94,7 +96,9 @@ class RsschedMatsimClientIT {
         config.getDepot().setCreateAtTerminalLocations(false);
 
         // process
-        RsschedMatsimClient client = new RsschedMatsimClient("localhost", 3000);
-        client.process(config);
+        RsschedMatsimClient client = new RsschedMatsimClient("http://localhost", 3000);
+        Response response = client.process(config);
+
+        assertNotNull(response);
     }
 }

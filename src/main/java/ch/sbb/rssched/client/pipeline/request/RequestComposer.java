@@ -44,14 +44,6 @@ public class RequestComposer implements Filter<RequestPipe> {
 
     private final RsschedRequestConfig config;
 
-    private void addVehicleTypes(Request.Builder builder, Scenario scenario) {
-        scenario.getTransitVehicles().getVehicleTypes().forEach(
-                (vehicleTypeId, vehicleType) -> builder.addVehicleType(vehicleTypeId.toString(),
-                        vehicleType.getCapacity().getSeats(),
-                        vehicleType.getCapacity().getSeats() + vehicleType.getCapacity().getStandingRoom(),
-                        config.getShunting().getDefaultMaximalFormationCount()));
-    }
-
     private static LocalDateTime toLocalDateTime(double secondsAfterMidnight) {
         final double totalSecondsInDay = 86400.0;
 
@@ -164,6 +156,14 @@ public class RequestComposer implements Filter<RequestPipe> {
         return new PassengerResult(maxPassengers, maxSeats);
     }
 
+    private void addVehicleTypes(Request.Builder builder, Scenario scenario) {
+        scenario.getTransitVehicles().getVehicleTypes().forEach(
+                (vehicleTypeId, vehicleType) -> builder.addVehicleType(vehicleTypeId.toString(),
+                        vehicleType.getCapacity().getSeats(),
+                        vehicleType.getCapacity().getSeats() + vehicleType.getCapacity().getStandingRoom(),
+                        config.getShunting().getDefaultMaximalFormationCount()));
+    }
+
     @Override
     public void apply(RequestPipe pipe) {
         setup();
@@ -174,7 +174,8 @@ public class RequestComposer implements Filter<RequestPipe> {
         addTransitLines(builder, scenario, pipe.getPassengers());
         if (config.getDepot().isCreateAtTerminalLocations()) {
             if (!config.getDepot().getCapacities().isEmpty()) {
-                log.warn("Specific depots (n = {}) from request config are ignored, since createAtTerminalLocations is set to true",
+                log.warn(
+                        "Specific depots (n = {}) from request config are ignored, since createAtTerminalLocations is set to true",
                         config.getDepot().getCapacities().size());
             }
         } else {

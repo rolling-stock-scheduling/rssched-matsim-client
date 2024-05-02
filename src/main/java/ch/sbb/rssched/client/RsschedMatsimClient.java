@@ -6,23 +6,28 @@ import ch.sbb.rssched.client.pipeline.request.RequestPipeline;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 /**
  * Rolling stock scheduling service client
  * <p>
- * Converts MATSim simulation run outputs to requests to the RSS service.
+ * Converts MATSim simulation run outputs to requests and sends them to the RSS service.
  *
  * @author munterfi
  */
 @Log4j2
 @RequiredArgsConstructor
 public class RsschedMatsimClient {
-    private final String host;
+    private final String baseUrl;
     private final int port;
 
     public Response process(RsschedRequestConfig config) {
-        RequestPipeline pipeline = new RequestPipeline(config);
+        AtomicReference<Response> response = new AtomicReference<>();
+
+        RequestPipeline pipeline = new RequestPipeline(config, baseUrl, port);
+        pipeline.addSink(pipe -> response.set(pipe.getResponse()));
         pipeline.run();
-        // TODO: Implement POST request
-        return null;
+
+        return response.get();
     }
 }

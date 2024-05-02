@@ -20,18 +20,6 @@ public class IntegrationTestData {
     private static final String[] FILE_NAMES = {"kelheim-v3.0-25pct.output_events.xml.gz", "kelheim-v3.0-25pct.output_network.xml.gz", "kelheim-v3.0-25pct.output_transitSchedule.xml.gz", "kelheim-v3.0-25pct.output_transitVehicles.xml.gz", "kelheim-v3.0-25pct.output_config.xml"};
     private final boolean overwrite;
 
-    public void setup() throws IOException {
-        ensureDirectory(IT_INPUT_DIRECTORY);
-        ensureDirectory(IT_OUTPUT_DIRECTORY);
-
-        for (String fileName : FILE_NAMES) {
-            String outputFilePath = IT_INPUT_DIRECTORY + fileName;
-            if (overwrite || !fileExists(outputFilePath)) {
-                downloadFile(BASE_URL + fileName, outputFilePath);
-            }
-        }
-    }
-
     private static void downloadFile(String url, String outputFilePath) throws IOException {
         log.info("Downloading: {} ...", url);
         try (BufferedInputStream in = new BufferedInputStream(
@@ -40,6 +28,23 @@ public class IntegrationTestData {
             int bytesRead;
             while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
                 fileOutputStream.write(dataBuffer, 0, bytesRead);
+            }
+        }
+    }
+
+    private static boolean fileExists(String filePath) {
+        File file = new File(filePath);
+        return file.exists();
+    }
+
+    public void setup() throws IOException {
+        ensureDirectory(IT_INPUT_DIRECTORY);
+        ensureDirectory(IT_OUTPUT_DIRECTORY);
+
+        for (String fileName : FILE_NAMES) {
+            String outputFilePath = IT_INPUT_DIRECTORY + fileName;
+            if (overwrite || !fileExists(outputFilePath)) {
+                downloadFile(BASE_URL + fileName, outputFilePath);
             }
         }
     }
@@ -54,10 +59,5 @@ public class IntegrationTestData {
                 log.error("Failed to create output directory: {}", path);
             }
         }
-    }
-
-    private static boolean fileExists(String filePath) {
-        File file = new File(filePath);
-        return file.exists();
     }
 }
