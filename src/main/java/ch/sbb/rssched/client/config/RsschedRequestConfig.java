@@ -126,10 +126,16 @@ public class RsschedRequestConfig {
     public static class Global {
 
         /**
+         * Define transit vehicle types in the scenario, which will overwrite the vehicle types from the MATSim
+         * scenario.
+         * <p>
+         * Note: The transit vehicle type ids must match / exist in the matsim scenario.
+         */
+        private final Set<VehicleType> vehicleTypes = new HashSet<>();
+        /**
          * The filter strategy to filter transit lines of interest, default is no filter.
          */
         private FilterStrategy filterStrategy = new NoFilterStrategy();
-
         /**
          * The sample size of the run, needed to scale to 100% for the demand.
          */
@@ -155,6 +161,9 @@ public class RsschedRequestConfig {
          * increase the total passenger count, but not the seat count.
          */
         private int seatDurationThreshold = 15 * 60;
+
+        public record VehicleType(String id, int capacity, int seats, int maximalFormationCount) {
+        }
 
     }
 

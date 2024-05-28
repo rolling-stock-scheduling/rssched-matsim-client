@@ -64,6 +64,10 @@ public class Example {
 }
 ```
 
+Alternatively use an XLSX file to configure the request to the scheduler,
+see [`RunExample`](src/main/java/ch/sbb/rssched/RunExample.java)
+and [`request_config.xlsx`](src/test/resources/ch/sbb/rssched/client/config/request_config.xlsx).
+
 **Note:** There is a hard limit of 500 locations per instance, since the deadhead trip matrix grows exponentially.
 
 ---

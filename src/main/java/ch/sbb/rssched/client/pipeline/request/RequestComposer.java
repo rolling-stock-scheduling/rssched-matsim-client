@@ -156,14 +156,6 @@ public class RequestComposer implements Filter<RequestPipe> {
         return new PassengerResult(maxPassengers, maxSeats);
     }
 
-    private void addVehicleTypes(Request.Builder builder, Scenario scenario) {
-        scenario.getTransitVehicles().getVehicleTypes().forEach(
-                (vehicleTypeId, vehicleType) -> builder.addVehicleType(vehicleTypeId.toString(),
-                        vehicleType.getCapacity().getSeats(),
-                        vehicleType.getCapacity().getSeats() + vehicleType.getCapacity().getStandingRoom(),
-                        config.getShunting().getDefaultMaximalFormationCount()));
-    }
-
     @Override
     public void apply(RequestPipe pipe) {
         setup();
@@ -188,6 +180,29 @@ public class RequestComposer implements Filter<RequestPipe> {
         setParameters(builder);
         // build request
         pipe.setRequest(builder.build());
+    }
+
+    private void addVehicleTypes(Request.Builder builder, Scenario scenario) {
+        if (config.getGlobal().getVehicleTypes().isEmpty()) {
+            addVehicleTypesFromScenario(builder, scenario);
+        } else {
+            addVehicleTypesFromConfig(builder);
+        }
+    }
+
+    private void addVehicleTypesFromConfig(Request.Builder builder) {
+        config.getGlobal().getVehicleTypes().forEach(
+                vehicleType -> builder.addVehicleType(vehicleType.id(), vehicleType.capacity(), vehicleType.seats(),
+                        vehicleType.maximalFormationCount()));
+
+    }
+
+    private void addVehicleTypesFromScenario(Request.Builder builder, Scenario scenario) {
+        scenario.getTransitVehicles().getVehicleTypes().forEach(
+                (vehicleTypeId, vehicleType) -> builder.addVehicleType(vehicleTypeId.toString(),
+                        vehicleType.getCapacity().getSeats(),
+                        vehicleType.getCapacity().getSeats() + vehicleType.getCapacity().getStandingRoom(),
+                        config.getShunting().getDefaultMaximalFormationCount()));
     }
 
     private void setup() {

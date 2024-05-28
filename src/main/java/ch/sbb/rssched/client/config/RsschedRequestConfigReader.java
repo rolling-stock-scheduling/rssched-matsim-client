@@ -28,22 +28,29 @@ import java.util.Set;
 public class RsschedRequestConfigReader {
 
     public static final String DEPOT_UNDEFINED_VEHICLE_TYPE = "TOTAL";
-    private static final RsschedRequestConfig.Builder builder = RsschedRequestConfig.builder();
+    private final RsschedRequestConfig.Builder builder = RsschedRequestConfig.builder();
     private final Set<String> allVehicleTypes = new HashSet<>();
+
+    private static void checkIfSheetExists(Sheet sheet, String sheetName) {
+        if (sheet == null) {
+            throw new IllegalArgumentException("Sheet " + sheetName + " not found");
+        }
+    }
 
     public RsschedRequestConfig readExcelFile(String filePath) throws IOException {
         FileInputStream fis = new FileInputStream(filePath);
         Workbook workbook = new XSSFWorkbook(fis);
-        parseScenarioInfoSheet(workbook.getSheet("scenario_info"));
-        parseVehicleTypesSheet(workbook.getSheet("vehicle_types"));
-        parseShuntingLocationsOnRouteSheet(workbook.getSheet("shunting_locations_on_route"));
-        parseDepotLocationsSheet(workbook.getSheet("depot_locations"));
-        parseMaintenanceSlotsSheet(workbook.getSheet("maintenance_slots"));
+        parseScenarioInfoSheet(workbook.getSheet(Sheets.SCENARIO_INFO));
+        parseVehicleTypesSheet(workbook.getSheet(Sheets.VEHICLE_TYPES));
+        parseShuntingLocationsOnRouteSheet(workbook.getSheet(Sheets.SHUNTING_LOCATIONS_ON_ROUTE));
+        parseDepotLocationsSheet(workbook.getSheet(Sheets.DEPOT_LOCATIONS));
+        parseMaintenanceSlotsSheet(workbook.getSheet(Sheets.MAINTENANCE_SLOTS));
         return builder.buildWithDefaults();
     }
 
     private void parseScenarioInfoSheet(Sheet sheet) {
-        if (sheet == null) return;
+        checkIfSheetExists(sheet, Sheets.SCENARIO_INFO);
+
         for (Row row : sheet) {
             Cell groupCell = row.getCell(0);
             Cell parameterCell = row.getCell(1);
@@ -139,36 +146,44 @@ public class RsschedRequestConfigReader {
                         }
                         break;
                 }
+            } else {
+                throw new IllegalStateException("Incomplete scenario info row.");
             }
         }
     }
 
     private void parseVehicleTypesSheet(Sheet sheet) {
-        Map<String, Set<String>> vehicleTypesPerGroup = new HashMap<>();
+        checkIfSheetExists(sheet, Sheets.VEHICLE_TYPES);
 
-        if (sheet == null) return;
+        Map<String, Set<String>> vehicleTypesPerGroup = new HashMap<>();
         for (Row row : sheet) {
             if (row.getRowNum() == 0) continue; // skip header row
             Cell groupIdCell = row.getCell(0);
             Cell vehicleTypeIdCell = row.getCell(1);
-            Cell lengthCell = row.getCell(2);
-            Cell standingRoomCell = row.getCell(3);
-            Cell seatsCell = row.getCell(4);
+            Cell standingRoomCell = row.getCell(2);
+            Cell seatsCell = row.getCell(3);
+            Cell maximumFormationCountCell = row.getCell(4);
 
-            if (groupIdCell != null && vehicleTypeIdCell != null && lengthCell != null && standingRoomCell != null && seatsCell != null) {
-                String grouId = groupIdCell.getStringCellValue();
+            if (groupIdCell != null && vehicleTypeIdCell != null && standingRoomCell != null && seatsCell != null && maximumFormationCountCell != null) {
+                String groupId = groupIdCell.getStringCellValue();
                 String vehicleTypeId = vehicleTypeIdCell.getStringCellValue();
-                double length = lengthCell.getNumericCellValue();
-                double standingRoom = standingRoomCell.getNumericCellValue();
-                double seats = seatsCell.getNumericCellValue();
+                int standingRoom = (int) standingRoomCell.getNumericCellValue();
+                int seats = (int) seatsCell.getNumericCellValue();
+                int maximumFormationCount = (int) maximumFormationCountCell.getNumericCellValue();
 
-                Set<String> group = vehicleTypesPerGroup.computeIfAbsent(grouId, ignored -> new HashSet<>());
-                group.add(vehicleTypeId);
+                // store type for generic depots, which have to support all types
                 allVehicleTypes.add(vehicleTypeId);
 
-                // handle vehicle types as needed
-                System.out.printf("Vehicle Type: %s, Length: %.2f, Standing Room: %.2f, Seats: %.2f%n", vehicleTypeId,
-                        length, standingRoom, seats);
+                // add to group for vehicle type filter strategy
+                Set<String> group = vehicleTypesPerGroup.computeIfAbsent(groupId, ignored -> new HashSet<>());
+                group.add(vehicleTypeId);
+
+                // add vehicle as vehicle type, will overwrite MATSim transit vehicle values
+                builder.config.getGlobal().getVehicleTypes()
+                        .add(new RsschedRequestConfig.Global.VehicleType(vehicleTypeId, standingRoom, seats,
+                                maximumFormationCount));
+            } else {
+                throw new IllegalStateException("Incomplete vehicle type row.");
             }
         }
 
@@ -181,21 +196,25 @@ public class RsschedRequestConfigReader {
     }
 
     private void parseShuntingLocationsOnRouteSheet(Sheet sheet) {
-        if (sheet == null) return;
+        checkIfSheetExists(sheet, Sheets.SHUNTING_LOCATIONS_ON_ROUTE);
+
         for (Row row : sheet) {
             if (row.getRowNum() == 0) continue; // skip header row
             Cell locationIdCell = row.getCell(0);
             if (locationIdCell != null) {
                 String locationId = locationIdCell.getStringCellValue();
                 builder.addShuntingLocation(locationId);
+            } else {
+                throw new IllegalStateException("Incomplete shunting location row.");
             }
         }
     }
 
     private void parseDepotLocationsSheet(Sheet sheet) {
+        checkIfSheetExists(sheet, Sheets.DEPOT_LOCATIONS);
+
         Map<String, Map<String, Integer>> depotCapacities = new HashMap<>();
 
-        if (sheet == null) return;
         for (Row row : sheet) {
             if (row.getRowNum() == 0) continue; // skip header row
             Cell locationIdCell = row.getCell(0);
@@ -210,6 +229,8 @@ public class RsschedRequestConfigReader {
                 Map<String, Integer> allowedType = depotCapacities.computeIfAbsent(locationId,
                         ignored -> new HashMap<>());
                 allowedType.put(vehicleTypeId, capacity);
+            } else {
+                throw new IllegalStateException("Incomplete depot location row.");
             }
         }
 
@@ -253,7 +274,9 @@ public class RsschedRequestConfigReader {
     }
 
     private void parseMaintenanceSlotsSheet(Sheet sheet) {
-        if (sheet == null) return;
+        checkIfSheetExists(sheet, Sheets.MAINTENANCE_SLOTS);
+
+        int count = 0;
         for (Row row : sheet) {
             if (row.getRowNum() == 0) continue; // skip header row
             Cell locationIdCell = row.getCell(0);
@@ -274,9 +297,21 @@ public class RsschedRequestConfigReader {
                     end = end.plusDays(1);
                 }
 
-                log.debug("Add maintenance slot {}, {}, {}, {}", locationId, tracks, start, end);
-                builder.addMaintenanceSlot(locationId, locationId, start, end, tracks);
+                String maintenanceSlotId = String.format("%s_%d_%d", locationId, tracks, ++count);
+                log.debug("Add maintenance slot {} at location {} with {} tracks from {} to {}", maintenanceSlotId,
+                        locationId, tracks, start, end);
+                builder.addMaintenanceSlot(maintenanceSlotId, locationId, start, end, tracks);
+            } else {
+                throw new IllegalStateException("Incomplete maintenance slot row.");
             }
         }
+    }
+
+    private static final class Sheets {
+        public static final String DEPOT_LOCATIONS = "depot_locations";
+        public static final String MAINTENANCE_SLOTS = "maintenance_slots";
+        public static final String SHUNTING_LOCATIONS_ON_ROUTE = "shunting_locations_on_route";
+        public static final String VEHICLE_TYPES = "vehicle_types";
+        public static final String SCENARIO_INFO = "scenario_info";
     }
 }
