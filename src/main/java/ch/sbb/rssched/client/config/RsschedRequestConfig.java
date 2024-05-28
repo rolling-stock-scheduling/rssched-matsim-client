@@ -6,6 +6,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ import java.util.Set;
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
+@ToString
 public class RsschedRequestConfig {
     private final Global global = new Global();
     private final Depot depot = new Depot();
@@ -42,9 +44,9 @@ public class RsschedRequestConfig {
      */
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Builder {
+        final RsschedRequestConfig config = new RsschedRequestConfig();
         private final Set<String> depotLocations = new HashSet<>();
         private final Map<String, Depot.Facility> depots = new HashMap<>();
-        private final RsschedRequestConfig config = new RsschedRequestConfig();
 
         public Builder setRunId(String runId) {
             config.runId = runId;
@@ -120,6 +122,7 @@ public class RsschedRequestConfig {
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     @Getter
     @Setter
+    @ToString
     public static class Global {
 
         /**
@@ -133,9 +136,9 @@ public class RsschedRequestConfig {
         private double sampleSize = 1.0;
 
         /**
-         * Speed limit used in the routing for deadhead trips
+         * Speed limit used in the routing for deadhead trips.
          */
-        private double deadHeadTripSpeedLimit = 90 * 3.6;
+        private double deadHeadTripSpeedLimit = 90 / 3.6;
 
         /**
          * Allow deadhead trips?
@@ -158,6 +161,7 @@ public class RsschedRequestConfig {
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     @Getter
     @Setter
+    @ToString
     public static class Depot {
 
         /**
@@ -198,6 +202,7 @@ public class RsschedRequestConfig {
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     @Getter
     @Setter
+    @ToString
     public static class Shunting {
 
         /**
@@ -207,7 +212,7 @@ public class RsschedRequestConfig {
         private final Set<String> onRouteLocations = new HashSet<>();
 
         /**
-         * The default maximal number oof units in a formation.
+         * The default maximal number of units in a formation.
          */
         private int defaultMaximalFormationCount = 3;
 
@@ -231,6 +236,7 @@ public class RsschedRequestConfig {
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     @Getter
     @Setter
+    @ToString
     public static class Maintenance {
 
         /**
@@ -253,10 +259,11 @@ public class RsschedRequestConfig {
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     @Getter
     @Setter
+    @ToString
     public static class Costs {
 
         /**
-         * Each train formation on a service trip has to pay this per minute (not for dead-head-trips / idle /
+         * Each train formation on a service trip has to pay this per second (not for dead-head-trips / idle /
          * maintenance).
          */
         private int staff = 100;

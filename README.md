@@ -42,7 +42,7 @@ public class Example {
 
     private static final String SCHEDULER_BASE_URL = "http://localhost";
     private static final int SCHEDULER_PORT = 3000;
-    
+
     public static void main(String[] args) {
         RsschedRequestConfig config = RsschedRequestConfig.builder()
                 .setInputDirectory("path/to/input/directory")

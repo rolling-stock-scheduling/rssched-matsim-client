@@ -1,5 +1,6 @@
 package ch.sbb.rssched.client.config.selection;
 
+import lombok.ToString;
 import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.Scenario;
 import org.matsim.pt.transitSchedule.api.TransitRoute;
@@ -16,6 +17,7 @@ import java.util.Set;
  *
  * @author munterfi
  */
+@ToString
 public class VehicleTypeFilterStrategy implements FilterStrategy {
 
     private final Map<String, String> lookup = new HashMap<>();
