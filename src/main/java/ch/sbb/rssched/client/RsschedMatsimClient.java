@@ -2,7 +2,7 @@ package ch.sbb.rssched.client;
 
 import ch.sbb.rssched.client.config.RsschedRequestConfig;
 import ch.sbb.rssched.client.dto.response.Response;
-import ch.sbb.rssched.client.pipeline.request.RequestPipeline;
+import ch.sbb.rssched.client.pipeline.response.ResponsePipeline;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
@@ -24,7 +24,7 @@ public class RsschedMatsimClient {
     public Response process(RsschedRequestConfig config) {
         AtomicReference<Response> response = new AtomicReference<>();
 
-        RequestPipeline pipeline = new RequestPipeline(config, baseUrl, port);
+        ResponsePipeline pipeline = new ResponsePipeline(config, baseUrl, port);
         pipeline.addSink(pipe -> response.set(pipe.getResponse()));
         pipeline.run();
 

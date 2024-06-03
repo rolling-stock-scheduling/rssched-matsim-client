@@ -21,9 +21,9 @@ public class RequestPipeline extends Pipeline<RequestPipe> {
      *
      * @param config The request configuration containing various parameters for the scheduler request.
      */
-    public RequestPipeline(RsschedRequestConfig config, String baseUrl, int port) {
+    public RequestPipeline(RsschedRequestConfig config) {
         // set source
-        super(new Collector(config.getRunId(),
+        super(new ScenarioPassengerCollector(config.getRunId(),
                 new ScenarioPipeline(config.getRunId(), config.getInputDirectory(), config.getOutputDirectory(),
                         config.getGlobal().getFilterStrategy()),
                 new PassengerPipeline(config.getRunId(), config.getInputDirectory(), config.getOutputDirectory(),
@@ -31,9 +31,7 @@ public class RequestPipeline extends Pipeline<RequestPipe> {
                         config.getGlobal().getSeatDurationThreshold())));
         // add filter
         addFilter(new RequestComposer(config));
-        addFilter(new RequestSender(baseUrl, port));
         // add sink
         addSink(new RequestJSONWriter(config.getOutputDirectory()));
-        addSink(new ResponseJSONWriter(config.getOutputDirectory()));
     }
 }

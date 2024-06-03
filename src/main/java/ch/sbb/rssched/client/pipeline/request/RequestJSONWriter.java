@@ -11,6 +11,8 @@ import java.io.IOException;
  * Request JSON writer
  * <p>
  * Writes the scheduler request to a JSON file in the specified output directory.
+ * <p>
+ * Note: Although this would be a sink,
  *
  * @author munterfi
  */

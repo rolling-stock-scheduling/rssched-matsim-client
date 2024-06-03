@@ -21,14 +21,14 @@ import java.util.stream.Collectors;
  * @author munterfi
  */
 @Log4j2
-class Collector implements DataSource<RequestPipe> {
+class ScenarioPassengerCollector implements DataSource<RequestPipe> {
     private final String runId;
     private final ScenarioPipeline scenarioPipeline;
     private final PassengerPipeline passengerPipeline;
     private Scenario scenario;
     private Map<Id<TransitLine>, Map<Id<TransitRoute>, Map<Id<Departure>, List<RequestComposer.PassengerCount>>>> passengers;
 
-    public Collector(String runId, ScenarioPipeline scenarioPipeline, PassengerPipeline passengerPipeline) {
+    public ScenarioPassengerCollector(String runId, ScenarioPipeline scenarioPipeline, PassengerPipeline passengerPipeline) {
         this.runId = runId;
         this.scenarioPipeline = scenarioPipeline;
         this.passengerPipeline = passengerPipeline;
