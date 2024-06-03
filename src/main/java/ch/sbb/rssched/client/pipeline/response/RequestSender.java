@@ -1,4 +1,4 @@
-package ch.sbb.rssched.client.pipeline.request;
+package ch.sbb.rssched.client.pipeline.response;
 
 import ch.sbb.rssched.client.dto.response.Response;
 import ch.sbb.rssched.client.pipeline.core.Filter;
@@ -20,13 +20,13 @@ import java.net.http.HttpResponse;
  */
 @RequiredArgsConstructor
 @Log4j2
-public class RequestSender implements Filter<RequestPipe> {
+public class RequestSender implements Filter<ResponsePipe> {
     public static final String SOLVER_URL_FORMAT = "%s:%d/solve";
     private final String baseUrl;
     private final int port;
 
     @Override
-    public void apply(RequestPipe pipe) {
+    public void apply(ResponsePipe pipe) {
         try {
             String url = String.format(SOLVER_URL_FORMAT, baseUrl, port);
             log.info("Sending request to {}...", url);

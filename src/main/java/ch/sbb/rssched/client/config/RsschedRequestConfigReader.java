@@ -51,6 +51,8 @@ public class RsschedRequestConfigReader {
     private void parseScenarioInfoSheet(Sheet sheet) {
         checkIfSheetExists(sheet, Sheets.SCENARIO_INFO);
 
+        String instanceId = "";
+
         for (Row row : sheet) {
             Cell groupCell = row.getCell(0);
             Cell parameterCell = row.getCell(1);
@@ -63,14 +65,17 @@ public class RsschedRequestConfigReader {
                 switch (group) {
                     case "global":
                         switch (parameter) {
-                            case "runId":
+                            case "instanceId":
+                                instanceId = valueCell.getStringCellValue();
+                                break;
+                            case "matsimRunId":
                                 builder.setRunId(valueCell.getStringCellValue());
                                 break;
-                            case "inputDirectory":
+                            case "matsimInputDirectory":
                                 builder.setInputDirectory(valueCell.getStringCellValue());
                                 break;
                             case "outputDirectory":
-                                builder.setOutputDirectory(valueCell.getStringCellValue());
+                                builder.setOutputDirectory(valueCell.getStringCellValue() + "/" + instanceId);
                                 break;
                             case "sampleSize":
                                 builder.config.getGlobal().setSampleSize(valueCell.getNumericCellValue());
@@ -180,7 +185,7 @@ public class RsschedRequestConfigReader {
 
                 // add vehicle as vehicle type, will overwrite MATSim transit vehicle values
                 builder.config.getGlobal().getVehicleTypes()
-                        .add(new RsschedRequestConfig.Global.VehicleType(vehicleTypeId, standingRoom, seats,
+                        .add(new RsschedRequestConfig.Global.VehicleType(vehicleTypeId, standingRoom + seats, seats,
                                 maximumFormationCount));
             } else {
                 throw new IllegalStateException("Incomplete vehicle type row.");

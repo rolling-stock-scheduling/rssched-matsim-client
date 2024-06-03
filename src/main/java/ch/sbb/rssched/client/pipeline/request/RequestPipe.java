@@ -1,7 +1,6 @@
 package ch.sbb.rssched.client.pipeline.request;
 
 import ch.sbb.rssched.client.dto.request.Request;
-import ch.sbb.rssched.client.dto.response.Response;
 import ch.sbb.rssched.client.pipeline.core.Pipe;
 import lombok.Getter;
 import lombok.Setter;
@@ -27,8 +26,6 @@ public class RequestPipe implements Pipe {
     private final Map<Id<TransitLine>, Map<Id<TransitRoute>, Map<Id<Departure>, List<RequestComposer.PassengerCount>>>> passengers;
     @Setter
     private Request request;
-    @Setter
-    private Response response;
 
     RequestPipe(String runId, Scenario scenario, Map<Id<TransitLine>, Map<Id<TransitRoute>, Map<Id<Departure>, List<RequestComposer.PassengerCount>>>> passengers) {
         this.runId = runId;

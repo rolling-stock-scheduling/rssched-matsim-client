@@ -1,4 +1,4 @@
-package ch.sbb.rssched.client.pipeline.request;
+package ch.sbb.rssched.client.pipeline.response;
 
 import ch.sbb.rssched.client.pipeline.core.ResultSink;
 import ch.sbb.rssched.client.pipeline.utils.io.OutputDirectoryManager;
@@ -15,7 +15,7 @@ import java.io.IOException;
  * @author munterfi
  */
 @Log4j2
-public class ResponseJSONWriter implements ResultSink<RequestPipe> {
+public class ResponseJSONWriter implements ResultSink<ResponsePipe> {
     private static final String RESPONSE_FILE_NAME = "scheduler_response.json";
     private final String outputDirectory;
 
@@ -24,7 +24,7 @@ public class ResponseJSONWriter implements ResultSink<RequestPipe> {
     }
 
     @Override
-    public void process(RequestPipe pipe) {
+    public void process(ResponsePipe pipe) {
         String filePath = new OutputDirectoryManager(outputDirectory, pipe.getRunId()).buildFilePath(
                 RESPONSE_FILE_NAME);
         log.info("Exporting response JSON to {}", filePath);

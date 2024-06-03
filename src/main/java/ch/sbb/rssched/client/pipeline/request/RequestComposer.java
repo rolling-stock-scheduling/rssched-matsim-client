@@ -175,7 +175,7 @@ public class RequestComposer implements Filter<RequestPipe> {
             // Otherwise, specific depots from config are ignored.
             addDepotsFromConfig(builder);
         }
-        addMaintenanceSlots(builder);
+        addMaintenanceSlots(builder, scenario);
         addDeadHeadTrips(builder, scenario);
         setParameters(builder);
         // build request
@@ -313,8 +313,15 @@ public class RequestComposer implements Filter<RequestPipe> {
         }
     }
 
-    private void addMaintenanceSlots(Request.Builder builder) {
+    private void addMaintenanceSlots(Request.Builder builder, Scenario scenario) {
         for (RsschedRequestConfig.Maintenance.Slot slot : config.getMaintenance().getSlots()) {
+            Id<TransitStopFacility> facilityId = Id.create(slot.locationId(), TransitStopFacility.class);
+            TransitStopFacility facility = scenario.getTransitSchedule().getFacilities().get(facilityId);
+            if (facility == null) {
+                throw new IllegalStateException(
+                        "Maintenance location " + facilityId + " not found in transit schedule facilities.");
+            }
+            addLocation(builder, facility);
             builder.addMaintenanceSlot(slot.id(), slot.locationId(), slot.start(), slot.end(), slot.trackCount());
         }
     }
