@@ -71,6 +71,14 @@ and [`request_config.xlsx`](src/test/resources/ch/sbb/rssched/client/config/requ
 
 **Note:** There is a hard limit of 500 locations per instance, since the deadhead trip matrix grows exponentially.
 
+## Testing
+
+Run the integration test to see the pipeline in action (needs a running solver on localhost and port 3000):
+
+```shell
+mvn verify -Dit.test=RsschedMatsimClientIT
+```
+
 ---
 
 © 2024 SBB CFF FFS. Licensed under GPL-3.0.
