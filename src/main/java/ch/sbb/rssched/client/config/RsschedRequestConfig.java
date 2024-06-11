@@ -2,6 +2,12 @@ package ch.sbb.rssched.client.config;
 
 import ch.sbb.rssched.client.config.selection.FilterStrategy;
 import ch.sbb.rssched.client.config.selection.NoFilterStrategy;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -37,6 +43,15 @@ public class RsschedRequestConfig {
 
     public static Builder builder() {
         return new Builder();
+    }
+
+    public String toJSON() throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new Jdk8Module());
+        mapper.registerModule(new JavaTimeModule());
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS); // Ensure dates are written in ISO 8601 format
+        mapper.enable(SerializationFeature.INDENT_OUTPUT);
+        return mapper.writeValueAsString(this);
     }
 
     /**
@@ -138,10 +153,13 @@ public class RsschedRequestConfig {
          * Note: The transit vehicle type ids must match / exist in the matsim scenario.
          */
         private final Set<VehicleType> vehicleTypes = new HashSet<>();
+
         /**
          * The filter strategy to filter transit lines of interest, default is no filter.
          */
+        @JsonIgnore
         private FilterStrategy filterStrategy = new NoFilterStrategy();
+
         /**
          * The sample size of the run, needed to scale to 100% for the demand.
          */

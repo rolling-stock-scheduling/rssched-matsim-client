@@ -32,6 +32,7 @@ public class RequestPipeline extends Pipeline<RequestPipe> {
         // add filter
         addFilter(new RequestComposer(config));
         // add sink
+        addSink(new RequestConfigWriter(config));
         addSink(new RequestJSONWriter(config.getOutputDirectory(), config.getInstanceId()));
     }
 }

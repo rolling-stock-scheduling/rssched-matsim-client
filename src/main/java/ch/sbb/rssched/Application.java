@@ -50,8 +50,6 @@ public class Application {
 
     // TODO: Export also RSSched configuration excel to output folder
 
-    // TODO: Use instance ID for file paths.
-
     public static final String APP_CMD_SYNTAX = "rssched-matsim-client <config_file>";
     public static final String DEFAULT_HOST = "http://localhost";
     public static final String DEFAULT_PORT = "3000";

@@ -39,7 +39,6 @@ class RsschedRequestConfigReaderIT {
         assertEquals(999, config.getDepot().getDefaultCapacity());
         assertEquals("dpt_", config.getDepot().getDefaultIdPrefix());
         assertFalse(config.getDepot().isCreateAtTerminalLocations());
-
     }
 
 }
