@@ -1,5 +1,7 @@
 package ch.sbb.rssched.client.config;
 
+import ch.sbb.rssched.client.config.RsschedRequestConfig;
+import ch.sbb.rssched.client.config.RsschedRequestConfigReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
