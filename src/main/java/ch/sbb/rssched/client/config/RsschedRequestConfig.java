@@ -2,6 +2,12 @@ package ch.sbb.rssched.client.config;
 
 import ch.sbb.rssched.client.config.selection.FilterStrategy;
 import ch.sbb.rssched.client.config.selection.NoFilterStrategy;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,12 +36,22 @@ public class RsschedRequestConfig {
     private final Shunting shunting = new Shunting();
     private final Maintenance maintenance = new Maintenance();
     private final Costs costs = new Costs();
+    private String instanceId;
     private String runId;
     private String inputDirectory;
     private String outputDirectory;
 
     public static Builder builder() {
         return new Builder();
+    }
+
+    public String toJSON() throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new Jdk8Module());
+        mapper.registerModule(new JavaTimeModule());
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS); // Ensure dates are written in ISO 8601 format
+        mapper.enable(SerializationFeature.INDENT_OUTPUT);
+        return mapper.writeValueAsString(this);
     }
 
     /**
@@ -47,6 +63,11 @@ public class RsschedRequestConfig {
         final RsschedRequestConfig config = new RsschedRequestConfig();
         private final Set<String> depotLocations = new HashSet<>();
         private final Map<String, Depot.Facility> depots = new HashMap<>();
+
+        public Builder setInstanceId(String instanceId) {
+            config.instanceId = instanceId;
+            return this;
+        }
 
         public Builder setRunId(String runId) {
             config.runId = runId;
@@ -111,9 +132,9 @@ public class RsschedRequestConfig {
          * @return The fully configured RequestConfig instance.
          */
         public RsschedRequestConfig buildWithDefaults() {
-            if (config.runId == null || config.inputDirectory == null || config.outputDirectory == null) {
+            if (config.instanceId == null || config.runId == null || config.inputDirectory == null || config.outputDirectory == null) {
                 throw new IllegalStateException(
-                        "Mandatory fields (runId, inputDirectory, outputDirectory) must be set.");
+                        "Mandatory fields (instanceId, runId, inputDirectory, outputDirectory) must be set.");
             }
             return config;
         }
@@ -132,10 +153,13 @@ public class RsschedRequestConfig {
          * Note: The transit vehicle type ids must match / exist in the matsim scenario.
          */
         private final Set<VehicleType> vehicleTypes = new HashSet<>();
+
         /**
          * The filter strategy to filter transit lines of interest, default is no filter.
          */
+        @JsonIgnore
         private FilterStrategy filterStrategy = new NoFilterStrategy();
+
         /**
          * The sample size of the run, needed to scale to 100% for the demand.
          */
@@ -145,6 +169,12 @@ public class RsschedRequestConfig {
          * Speed limit used in the routing for deadhead trips.
          */
         private double deadHeadTripSpeedLimit = 90 / 3.6;
+
+        /**
+         * The factor that is applied to travel the beeline distance at speed limit, if no path in the network is found
+         * for the dead head trip between two locations.
+         */
+        private double deadHeadTripBeelineDistanceFactor = 5;
 
         /**
          * Allow deadhead trips?

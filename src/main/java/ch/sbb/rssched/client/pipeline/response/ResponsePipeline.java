@@ -11,7 +11,7 @@ public class ResponsePipeline extends Pipeline<ResponsePipe> {
         // add filter
         addFilter(new RequestSender(baseUrl, port));
         // add sink
-        addSink(new ResponseJSONWriter(config.getOutputDirectory()));
+        addSink(new ResponseJSONWriter(config.getOutputDirectory(), config.getInstanceId()));
     }
 
 }

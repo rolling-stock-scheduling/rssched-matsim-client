@@ -5,6 +5,7 @@ import org.matsim.api.core.v01.network.Link;
 import org.matsim.api.core.v01.network.Network;
 import org.matsim.api.core.v01.network.Node;
 import org.matsim.api.core.v01.population.Person;
+import org.matsim.core.network.NetworkUtils;
 import org.matsim.core.router.DijkstraFactory;
 import org.matsim.core.router.util.LeastCostPathCalculator;
 import org.matsim.core.router.util.TravelDisutility;
@@ -25,11 +26,13 @@ public class TrainNetworkRouter {
     private static final Double TOLERANCE = 0.001;
     private final Network network;
     private final double freeSpeedLimit;
+    private final double beelineDistanceFactor;
     private final LeastCostPathCalculator lpc;
 
-    public TrainNetworkRouter(Network network, double freeSpeedLimit) {
+    public TrainNetworkRouter(Network network, double freeSpeedLimit, double beelineDistanceFactor) {
         this.network = network;
         this.freeSpeedLimit = freeSpeedLimit;
+        this.beelineDistanceFactor = beelineDistanceFactor;
         this.lpc = new DijkstraFactory(false).createPathCalculator(network, new TrainTravelDisutility(),
                 new FreeSpeedTravelTime());
     }
@@ -46,8 +49,14 @@ public class TrainNetworkRouter {
         Node toNode = network.getLinks().get(to.getLinkId()).getFromNode();
         LeastCostPathCalculator.Path path = lpc.calcLeastCostPath(fromNode, toNode, 0, null, null);
         if (path == null) {
-            log.warn("Setting duration and distance to Integer.MAX_VALUE for route from {} to {}", fromNode, toNode);
-            return new PathResult(Integer.MAX_VALUE, Integer.MAX_VALUE);
+            double beelineDistance = NetworkUtils.getEuclideanDistance(fromNode.getCoord(), toNode.getCoord());
+            double distance = beelineDistance * beelineDistanceFactor;
+            double duration = distance / freeSpeedLimit;
+            log.warn(
+                    "Setting duration and distance to {}s / {}m (beeline distance: {}m times factor: {}) for route from {} to {}",
+                    Math.round(duration), Math.round(distance), Math.round(beelineDistance), beelineDistanceFactor,
+                    fromNode.getId(), toNode.getId());
+            return new PathResult((int) Math.round(duration), (int) Math.round(distance));
         }
         double travelTime = path.travelCost;
         double travelDistance = extractPathLength(path);

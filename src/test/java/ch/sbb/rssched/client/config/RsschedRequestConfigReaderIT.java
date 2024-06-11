@@ -1,7 +1,5 @@
 package ch.sbb.rssched.client.config;
 
-import ch.sbb.rssched.client.config.RsschedRequestConfig;
-import ch.sbb.rssched.client.config.RsschedRequestConfigReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -26,9 +24,10 @@ class RsschedRequestConfigReaderIT {
         RsschedRequestConfig config = reader.readExcelFile(filePath.getPath());
 
         assertNotNull(config);
+        assertEquals("rss001", config.getInstanceId());
         assertEquals("run_1", config.getRunId());
         assertEquals("input/folder/path", config.getInputDirectory());
-        assertEquals("output/folder/path/rss001", config.getOutputDirectory());
+        assertEquals("output/folder/path", config.getOutputDirectory());
 
         // global settings
         assertEquals(0.1, config.getGlobal().getSampleSize());
@@ -40,7 +39,6 @@ class RsschedRequestConfigReaderIT {
         assertEquals(999, config.getDepot().getDefaultCapacity());
         assertEquals("dpt_", config.getDepot().getDefaultIdPrefix());
         assertFalse(config.getDepot().isCreateAtTerminalLocations());
-
     }
 
 }

@@ -51,8 +51,6 @@ public class RsschedRequestConfigReader {
     private void parseScenarioInfoSheet(Sheet sheet) {
         checkIfSheetExists(sheet, Sheets.SCENARIO_INFO);
 
-        String instanceId = "";
-
         for (Row row : sheet) {
             Cell groupCell = row.getCell(0);
             Cell parameterCell = row.getCell(1);
@@ -66,7 +64,8 @@ public class RsschedRequestConfigReader {
                     case "global":
                         switch (parameter) {
                             case "instanceId":
-                                instanceId = valueCell.getStringCellValue();
+                                String instanceId = valueCell.getStringCellValue();
+                                builder.setInstanceId(instanceId);
                                 break;
                             case "matsimRunId":
                                 builder.setRunId(valueCell.getStringCellValue());
@@ -75,13 +74,17 @@ public class RsschedRequestConfigReader {
                                 builder.setInputDirectory(valueCell.getStringCellValue());
                                 break;
                             case "outputDirectory":
-                                builder.setOutputDirectory(valueCell.getStringCellValue() + "/" + instanceId);
+                                builder.setOutputDirectory(valueCell.getStringCellValue());
                                 break;
                             case "sampleSize":
                                 builder.config.getGlobal().setSampleSize(valueCell.getNumericCellValue());
                                 break;
                             case "deadHeadTripSpeedLimit":
                                 builder.config.getGlobal().setDeadHeadTripSpeedLimit(valueCell.getNumericCellValue());
+                                break;
+                            case "deadHeadTripBeelineDistanceFactor":
+                                builder.config.getGlobal()
+                                        .setDeadHeadTripBeelineDistanceFactor(valueCell.getNumericCellValue());
                                 break;
                             case "forbidDeadHeadTrips":
                                 builder.config.getGlobal().setForbidDeadHeadTrips(valueCell.getBooleanCellValue());

@@ -24,14 +24,15 @@ public class RequestPipeline extends Pipeline<RequestPipe> {
     public RequestPipeline(RsschedRequestConfig config) {
         // set source
         super(new ScenarioPassengerCollector(config.getRunId(),
-                new ScenarioPipeline(config.getRunId(), config.getInputDirectory(), config.getOutputDirectory(),
-                        config.getGlobal().getFilterStrategy()),
-                new PassengerPipeline(config.getRunId(), config.getInputDirectory(), config.getOutputDirectory(),
-                        config.getGlobal().getFilterStrategy(), config.getGlobal().getSampleSize(),
-                        config.getGlobal().getSeatDurationThreshold())));
+                new ScenarioPipeline(config.getInstanceId(), config.getRunId(), config.getInputDirectory(),
+                        config.getOutputDirectory(), config.getGlobal().getFilterStrategy()),
+                new PassengerPipeline(config.getInstanceId(), config.getRunId(), config.getInputDirectory(),
+                        config.getOutputDirectory(), config.getGlobal().getFilterStrategy(),
+                        config.getGlobal().getSampleSize(), config.getGlobal().getSeatDurationThreshold())));
         // add filter
         addFilter(new RequestComposer(config));
         // add sink
-        addSink(new RequestJSONWriter(config.getOutputDirectory()));
+        addSink(new RequestConfigWriter(config));
+        addSink(new RequestJSONWriter(config.getOutputDirectory(), config.getInstanceId()));
     }
 }

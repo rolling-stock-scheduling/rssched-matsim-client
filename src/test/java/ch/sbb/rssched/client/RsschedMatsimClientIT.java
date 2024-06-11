@@ -1,6 +1,7 @@
 package ch.sbb.rssched.client;
 
 import ch.sbb.rssched.client.config.RsschedRequestConfig;
+import ch.sbb.rssched.client.config.RsschedRequestConfigReader;
 import ch.sbb.rssched.client.config.selection.FilterStrategy;
 import ch.sbb.rssched.client.config.selection.TransitLineSelection;
 import ch.sbb.rssched.client.dto.response.Response;
@@ -14,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class RsschedMatsimClientIT {
 
+    private static final String REQUEST_CONFIG_XLSX = "integration-test/input/de/kelheim/kelheim-v3.0/25pct/kelheim-v3.0-25pct.rssched_request_config.xlsx";
     private static final String SCHEDULER_BASE_URL = "http://localhost";
     private static final int SCHEDULER_PORT = 3000;
 
@@ -23,7 +25,16 @@ class RsschedMatsimClientIT {
     }
 
     @Test
-    void testProcess() {
+    void testWithConfigReader() throws IOException {
+        RsschedRequestConfig config = new RsschedRequestConfigReader().readExcelFile(REQUEST_CONFIG_XLSX);
+        RsschedMatsimClient client = new RsschedMatsimClient(SCHEDULER_BASE_URL, SCHEDULER_PORT);
+        Response response = client.process(config);
+
+        assertNotNull(response);
+    }
+
+    @Test
+    void testWithConfigBuilder() {
         // filter to Kehlheim region
         FilterStrategy filterStrategy = scenario -> {
             TransitLineSelection selection = new TransitLineSelection();
@@ -38,7 +49,7 @@ class RsschedMatsimClientIT {
         };
 
         // build request config
-        RsschedRequestConfig.Builder builder = RsschedRequestConfig.builder()
+        RsschedRequestConfig.Builder builder = RsschedRequestConfig.builder().setInstanceId("it_builder")
                 .setInputDirectory(MatsimRun.INPUT_DIRECTORY).setOutputDirectory(MatsimRun.OUTPUT_DIRECTORY)
                 .setRunId(MatsimRun.ID).setFilterStrategy(filterStrategy);
 

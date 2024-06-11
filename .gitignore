@@ -20,5 +20,5 @@ buildNumber.properties
 src/main/java/ch/sbb/rssched/local/
 
 # integration test data
-integration-test/input/**/*.xml.gz
+integration-test/input/**/*events.xml.gz
 integration-test/output/

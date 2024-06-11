@@ -27,14 +27,16 @@ class PassengerCSVWriter implements ResultSink<PassengerPipe> {
     private static final String PASSENGER_FILE = "passenger.csv";
     private static final String[] HEADER = {"transit_line_id", "transit_route_id", "departure_id", "stop_id", "stop_name", "arrival", "departure", "egress", "access", "to_stop_id", "to_stop_name", "passengers", "seats"};
     private final String outputDirectory;
+    private final String instanceId;
 
     /**
      * Constructs a PassengerExporter with the specified output directory.
      *
      * @param outputDirectory the directory to export the passenger file to.
      */
-    public PassengerCSVWriter(String outputDirectory) {
+    public PassengerCSVWriter(String outputDirectory, String instanceId) {
         this.outputDirectory = outputDirectory;
+        this.instanceId = instanceId;
     }
 
     public static void writeCsv(List<EventAnalysis.Entry> entries, String filename) throws UncheckedIOException {
@@ -80,7 +82,7 @@ class PassengerCSVWriter implements ResultSink<PassengerPipe> {
 
     @Override
     public void process(PassengerPipe pipe) {
-        String passengerFilePath = new OutputDirectoryManager(outputDirectory, pipe.runId()).buildFilePath(
+        String passengerFilePath = new OutputDirectoryManager(outputDirectory, pipe.runId(), instanceId).buildFilePath(
                 PASSENGER_FILE);
         log.info("Exporting passenger file to {}", passengerFilePath);
         writeCsv(pipe.entries(), passengerFilePath);

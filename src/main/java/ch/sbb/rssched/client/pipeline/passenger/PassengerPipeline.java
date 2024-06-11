@@ -13,18 +13,19 @@ public class PassengerPipeline extends Pipeline<PassengerPipe> {
     /**
      * Constructs a RepPipeline with the specified parameters.
      *
+     * @param instanceId      the ID of the RSSched instance (=request) to solve
      * @param runId           the ID of the scenario run
      * @param inputDirectory  the input directory containing the scenario data (output files of the simulation)
      * @param outputDirectory the output directory to export the processed scenario files
      * @param filterStrategy  the filter strategy for filtering transit lines
      */
-    public PassengerPipeline(String runId, String inputDirectory, String outputDirectory, FilterStrategy filterStrategy, double sampleSize, int seatDurationThreshold) {
+    public PassengerPipeline(String instanceId, String runId, String inputDirectory, String outputDirectory, FilterStrategy filterStrategy, double sampleSize, int seatDurationThreshold) {
         // set source
         super(new EventSource(runId, inputDirectory));
         // add filters
         addFilter(new TransitLineFilter(filterStrategy));
         addFilter(new EventAnalysisFilter(sampleSize, seatDurationThreshold));
         // add sink
-        addSink(new PassengerCSVWriter(outputDirectory));
+        addSink(new PassengerCSVWriter(outputDirectory, instanceId));
     }
 }

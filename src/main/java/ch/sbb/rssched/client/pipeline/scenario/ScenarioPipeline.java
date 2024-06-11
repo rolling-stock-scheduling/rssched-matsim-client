@@ -17,12 +17,13 @@ public class ScenarioPipeline extends Pipeline<ScenarioPipe> {
     /**
      * Constructs a RepPipeline with the specified parameters.
      *
+     * @param instanceId      the ID of the RSSched instance (=request) to solve
      * @param runId           the ID of the scenario run
      * @param inputDirectory  the input directory containing the scenario data (output files of the simulation)
      * @param outputDirectory the output directory to export the processed scenario files
      * @param filterStrategy  the strategy for filtering transit lines
      */
-    public ScenarioPipeline(String runId, String inputDirectory, String outputDirectory, FilterStrategy filterStrategy) {
+    public ScenarioPipeline(String instanceId, String runId, String inputDirectory, String outputDirectory, FilterStrategy filterStrategy) {
         // set source
         super(new ScenarioSource(runId, inputDirectory));
         // filter transit lines
@@ -34,7 +35,7 @@ public class ScenarioPipeline extends Pipeline<ScenarioPipe> {
         // clear attributes
         addFilter(new AttributeRemover());
         // add sink
-        addSink(new LineSelectionCSVWriter(outputDirectory));
-        addSink(new ScenarioExporter(outputDirectory));
+        addSink(new LineSelectionCSVWriter(outputDirectory, instanceId));
+        addSink(new ScenarioExporter(outputDirectory, instanceId));
     }
 }
