@@ -49,6 +49,12 @@ Options:
     - `-p / --port`: Scheduler port (default: 3000).
     - `-d / --dry-run`: If present, do not send the request to the solver (default: false).
 
+See [kelheim-v3.0-25pct.rssched_request_config.xlsx](integration-test/input/de/kelheim/kelheim-v3.0/25pct/kelheim-v3.0-25pct.rssched_request_config.xlsx)
+for reference of a request configuration.
+
+**Note**: To be able to run the integration test using the command line app, first execute the integration tests, which
+downloads the needed matsim run outputs, see the paragraph **Testing** below.
+
 ### Using Client in Java
 
 Set up the `RsschedRequestClient` and send a request to the rolling stock scheduling solver service using
@@ -114,9 +120,15 @@ public class RunExample {
 
 ## Testing
 
+Run the unit tests:
+
+```sh
+mvn test
+```
+
 Run the integration test to see the pipeline in action (needs a running solver on localhost and port 3000):
 
-```shell
+```sh
 mvn verify -Dit.test=RsschedMatsimClientIT
 ```
 
