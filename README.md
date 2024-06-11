@@ -75,6 +75,7 @@ public class RunExample {
                 .setInputDirectory("path/to/input/directory")
                 .setOutputDirectory("path/to/output/directory")
                 .setRunId("runId")
+                .setInstanceId("rss001")
                 // optionally set transit line filter, default is no filtering
                 .setFilterStrategy(scenario -> {
                     // implementation...

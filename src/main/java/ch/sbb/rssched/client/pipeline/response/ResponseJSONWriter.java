@@ -18,14 +18,16 @@ import java.io.IOException;
 public class ResponseJSONWriter implements ResultSink<ResponsePipe> {
     private static final String RESPONSE_FILE_NAME = "scheduler_response.json";
     private final String outputDirectory;
+    private final String instanceId;
 
-    public ResponseJSONWriter(String outputDirectory) {
+    public ResponseJSONWriter(String outputDirectory, String instanceId) {
         this.outputDirectory = outputDirectory;
+        this.instanceId = instanceId;
     }
 
     @Override
     public void process(ResponsePipe pipe) {
-        String filePath = new OutputDirectoryManager(outputDirectory, pipe.getRunId()).buildFilePath(
+        String filePath = new OutputDirectoryManager(outputDirectory, pipe.getRunId(), instanceId).buildFilePath(
                 RESPONSE_FILE_NAME);
         log.info("Exporting response JSON to {}", filePath);
         try (FileWriter fileWriter = new FileWriter(filePath)) {

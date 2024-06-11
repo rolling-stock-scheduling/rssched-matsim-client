@@ -15,10 +15,12 @@ public class OutputDirectoryManager {
     private static final String DIRECTORY_PREFIX = "rssched";
     @Getter
     private final String path;
+    private final String instanceId;
     private final String runId;
 
-    public OutputDirectoryManager(String outputDirectory, String runId) {
-        this.path = String.format("%s/%s_%s", outputDirectory, DIRECTORY_PREFIX, runId);
+    public OutputDirectoryManager(String outputDirectory, String runId, String instanceId) {
+        this.instanceId = instanceId;
+        this.path = String.format("%s/%s_%s/%s", outputDirectory, DIRECTORY_PREFIX, runId, instanceId);
         this.runId = runId;
         createDirectory(path);
     }
@@ -34,7 +36,7 @@ public class OutputDirectoryManager {
     }
 
     public String buildFilePath(String fileName) {
-        return String.format("%s/%s.%s", path, runId, fileName);
+        return String.format("%s/%s.%s.%s", path, instanceId, runId, fileName);
     }
 
 }

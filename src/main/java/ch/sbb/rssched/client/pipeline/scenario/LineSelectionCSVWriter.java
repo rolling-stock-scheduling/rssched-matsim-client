@@ -16,14 +16,16 @@ class LineSelectionCSVWriter implements ResultSink<ScenarioPipe> {
     private static final String LINE_SELECTION_FILE = "line_selection.csv";
     private static final String[] HEADER = {"group", "transit_line_id", "transit_route_id"};
     private final String outputDirectory;
+    private final String instanceId;
 
     /**
      * Constructs a PassengerExporter with the specified output directory.
      *
      * @param outputDirectory the directory to export the passenger file to.
      */
-    public LineSelectionCSVWriter(String outputDirectory) {
+    public LineSelectionCSVWriter(String outputDirectory, String instanceId) {
         this.outputDirectory = outputDirectory;
+        this.instanceId = instanceId;
     }
 
     public static void writeCsv(TransitLineSelection selection, String filename) throws UncheckedIOException {
@@ -48,7 +50,8 @@ class LineSelectionCSVWriter implements ResultSink<ScenarioPipe> {
 
     @Override
     public void process(ScenarioPipe pipe) {
-        String filePath = new OutputDirectoryManager(outputDirectory, pipe.runId).buildFilePath(LINE_SELECTION_FILE);
+        String filePath = new OutputDirectoryManager(outputDirectory, pipe.runId, instanceId).buildFilePath(
+                LINE_SELECTION_FILE);
         log.info("Exporting line selection file to {}", filePath);
         writeCsv(pipe.selection, filePath);
     }

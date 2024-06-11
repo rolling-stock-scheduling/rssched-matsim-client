@@ -30,6 +30,7 @@ public class RsschedRequestConfig {
     private final Shunting shunting = new Shunting();
     private final Maintenance maintenance = new Maintenance();
     private final Costs costs = new Costs();
+    private String instanceId;
     private String runId;
     private String inputDirectory;
     private String outputDirectory;
@@ -47,6 +48,11 @@ public class RsschedRequestConfig {
         final RsschedRequestConfig config = new RsschedRequestConfig();
         private final Set<String> depotLocations = new HashSet<>();
         private final Map<String, Depot.Facility> depots = new HashMap<>();
+
+        public Builder setInstanceId(String instanceId) {
+            config.instanceId = instanceId;
+            return this;
+        }
 
         public Builder setRunId(String runId) {
             config.runId = runId;
@@ -111,9 +117,9 @@ public class RsschedRequestConfig {
          * @return The fully configured RequestConfig instance.
          */
         public RsschedRequestConfig buildWithDefaults() {
-            if (config.runId == null || config.inputDirectory == null || config.outputDirectory == null) {
+            if (config.instanceId == null || config.runId == null || config.inputDirectory == null || config.outputDirectory == null) {
                 throw new IllegalStateException(
-                        "Mandatory fields (runId, inputDirectory, outputDirectory) must be set.");
+                        "Mandatory fields (instanceId, runId, inputDirectory, outputDirectory) must be set.");
             }
             return config;
         }

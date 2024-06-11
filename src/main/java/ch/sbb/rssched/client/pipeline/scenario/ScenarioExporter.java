@@ -21,14 +21,16 @@ class ScenarioExporter implements ResultSink<ScenarioPipe> {
     private static final String TRANSIT_SCHEDULE_FILE = "transitSchedule.xml.gz";
     private static final String TRANSIT_VEHICLES_FILE = "transitVehicles.xml.gz";
     private final String outputDirectory;
+    private final String instanceId;
 
     /**
      * Constructs a ScenarioExporter with the specified output directory.
      *
      * @param outputDirectory the directory to export the scenario files to
      */
-    public ScenarioExporter(String outputDirectory) {
+    public ScenarioExporter(String outputDirectory, String instanceId) {
         this.outputDirectory = outputDirectory;
+        this.instanceId = instanceId;
     }
 
     @Override
@@ -37,7 +39,7 @@ class ScenarioExporter implements ResultSink<ScenarioPipe> {
     }
 
     private void export(Scenario scenario, String runId) {
-        var directoryUtil = new OutputDirectoryManager(outputDirectory, runId);
+        var directoryUtil = new OutputDirectoryManager(outputDirectory, runId, instanceId);
         new NetworkWriter(scenario.getNetwork()).write(directoryUtil.buildFilePath(NETWORK_FILE));
         new TransitScheduleWriter(scenario.getTransitSchedule()).writeFile(
                 directoryUtil.buildFilePath(TRANSIT_SCHEDULE_FILE));
