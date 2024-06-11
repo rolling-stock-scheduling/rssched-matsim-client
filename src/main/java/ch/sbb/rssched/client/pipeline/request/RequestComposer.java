@@ -334,10 +334,11 @@ public class RequestComposer implements Filter<RequestPipe> {
         log.info("Creating dead head trip matrix ({}x{}={})", locations.keySet().size(), locations.keySet().size(),
                 locations.keySet().size() * locations.keySet().size());
         TrainNetworkRouter trainNetworkRouter = new TrainNetworkRouter(scenario.getNetwork(),
-                config.getGlobal().getDeadHeadTripSpeedLimit());
+                config.getGlobal().getDeadHeadTripSpeedLimit(),
+                config.getGlobal().getDeadHeadTripBeelineDistanceFactor());
         locations.keySet().forEach(originId -> locations.keySet().forEach(destinationId -> {
             if (!originId.equals(destinationId)) {
-                var pathResult = trainNetworkRouter.calculate(
+                TrainNetworkRouter.PathResult pathResult = trainNetworkRouter.calculate(
                         scenario.getTransitSchedule().getFacilities().get(originId),
                         scenario.getTransitSchedule().getFacilities().get(destinationId));
                 builder.addDeadHeadTrip(originId.toString(), destinationId.toString(), pathResult.duration(),

@@ -52,8 +52,6 @@ public class Application {
 
     // TODO: Use instance ID for file paths.
 
-    // TODO: Set max deadhead trip to beeline distance times a factor.
-
     public static final String APP_CMD_SYNTAX = "rssched-matsim-client <config_file>";
     public static final String DEFAULT_HOST = "http://localhost";
     public static final String DEFAULT_PORT = "3000";

@@ -83,6 +83,10 @@ public class RsschedRequestConfigReader {
                             case "deadHeadTripSpeedLimit":
                                 builder.config.getGlobal().setDeadHeadTripSpeedLimit(valueCell.getNumericCellValue());
                                 break;
+                            case "deadHeadTripBeelineDistanceFactor":
+                                builder.config.getGlobal()
+                                        .setDeadHeadTripBeelineDistanceFactor(valueCell.getNumericCellValue());
+                                break;
                             case "forbidDeadHeadTrips":
                                 builder.config.getGlobal().setForbidDeadHeadTrips(valueCell.getBooleanCellValue());
                                 break;

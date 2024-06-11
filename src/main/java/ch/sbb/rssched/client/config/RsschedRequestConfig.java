@@ -147,6 +147,12 @@ public class RsschedRequestConfig {
         private double deadHeadTripSpeedLimit = 90 / 3.6;
 
         /**
+         * The factor that is applied to travel the beeline distance at speed limit, if no path in the network is found
+         * for the dead head trip between two locations.
+         */
+        private double deadHeadTripBeelineDistanceFactor = 5;
+
+        /**
          * Allow deadhead trips?
          */
         private boolean forbidDeadHeadTrips = false;
