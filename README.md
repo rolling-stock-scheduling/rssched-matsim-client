@@ -31,6 +31,26 @@ The project has the following package structure:
 
 ## Usage
 
+### Using Command-Line Application
+
+Read the request configuration from an Excel file and optionally send the request to the solver using the
+RsschedMatsimClient:
+
+```sh
+mvn exec:java -Dexec.args="path/to/config_file.xlsx -h localhost -p 3000 -d"
+```
+
+Options:
+
+- **Required:**
+    - `config_file`: Path to the Excel configuration file.
+- **Optional:**
+    - `-h / --host`: Scheduler base URL (default: "http://localhost").
+    - `-p / --port`: Scheduler port (default: 3000).
+    - `-d / --dry-run`: If present, do not send the request to the solver (default: false).
+
+### Using Client in Java
+
 Set up the `RsschedRequestClient` and send a request to the rolling stock scheduling solver service using
 the `RsschedRequestConfig` to configure it. Optionally implement a transit line filter strategy.
 
@@ -39,7 +59,7 @@ import ch.sbb.rssched.client.RsschedMatsimClient;
 import ch.sbb.rssched.client.config.RsschedRequestConfig;
 import ch.sbb.rssched.client.dto.response.Response;
 
-public class Example {
+public class RunExample {
 
     private static final String SCHEDULER_BASE_URL = "http://localhost";
     private static final int SCHEDULER_PORT = 3000;
@@ -65,9 +85,30 @@ public class Example {
 }
 ```
 
-Alternatively use an XLSX file to configure the request to the solver,
-see [`RunExample`](src/main/java/ch/sbb/rssched/RunExample.java)
-and [`request_config.xlsx`](src/test/resources/ch/sbb/rssched/client/config/request_config.xlsx).
+Alternatively use an Excel file to configure the request to the solver:
+
+```java
+import ch.sbb.rssched.client.RsschedMatsimClient;
+import ch.sbb.rssched.client.config.RsschedRequestConfig;
+import ch.sbb.rssched.client.config.RsschedRequestConfigReader;
+import ch.sbb.rssched.client.dto.response.Response;
+
+import java.io.IOException;
+
+public class RunExample {
+
+    private static final String REQUEST_CONFIG_XLSX = "rssched_request_config.xlsx";
+    private static final String SCHEDULER_BASE_URL = "http://localhost";
+    private static final int SCHEDULER_PORT = 3000;
+
+    public static void main(String[] args) throws IOException {
+        RsschedRequestConfig config = new RsschedRequestConfigReader().readExcelFile(REQUEST_CONFIG_XLSX);
+        RsschedMatsimClient client = new RsschedMatsimClient(SCHEDULER_BASE_URL, SCHEDULER_PORT);
+        Response response = client.process(config);
+    }
+
+}
+```
 
 **Note:** There is a hard limit of 500 locations per instance, since the deadhead trip matrix grows exponentially.
 
