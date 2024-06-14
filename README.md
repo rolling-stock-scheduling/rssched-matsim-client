@@ -31,6 +31,8 @@ The project has the following package structure:
 
 ## Usage
 
+To get started with the whole RSSched project, have a look at this [step-by-step instruction](https://github.com/rolling-stock-scheduling/.github/blob/main/getting_started.md).
+
 ### Using Command-Line Application
 
 Read the request configuration from an Excel file and optionally send the request to the solver using the
