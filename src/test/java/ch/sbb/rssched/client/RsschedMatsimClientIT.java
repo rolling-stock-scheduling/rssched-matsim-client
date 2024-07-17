@@ -51,7 +51,7 @@ class RsschedMatsimClientIT {
         // build request config
         RsschedRequestConfig.Builder builder = RsschedRequestConfig.builder().setInstanceId("it_builder")
                 .setInputDirectory(MatsimRun.INPUT_DIRECTORY).setOutputDirectory(MatsimRun.OUTPUT_DIRECTORY)
-                .setRunId(MatsimRun.ID).setFilterStrategy(filterStrategy);
+                .setRunId(MatsimRun.ID).setNetworkCrs(MatsimRun.CRS).setFilterStrategy(filterStrategy);
 
         // add depots
         Depots.LOCATIONS.forEach(location -> {

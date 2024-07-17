@@ -21,11 +21,12 @@ public class ScenarioPipeline extends Pipeline<ScenarioPipe> {
      * @param runId           the ID of the scenario run
      * @param inputDirectory  the input directory containing the scenario data (output files of the simulation)
      * @param outputDirectory the output directory to export the processed scenario files
+     * @param networkCrs      the coordinate reference system of the network
      * @param filterStrategy  the strategy for filtering transit lines
      */
-    public ScenarioPipeline(String instanceId, String runId, String inputDirectory, String outputDirectory, FilterStrategy filterStrategy) {
+    public ScenarioPipeline(String instanceId, String runId, String inputDirectory, String outputDirectory, String networkCrs, FilterStrategy filterStrategy) {
         // set source
-        super(new ScenarioSource(runId, inputDirectory));
+        super(new ScenarioSource(runId, inputDirectory, networkCrs));
         // filter transit lines
         addFilter(new TransitLineFilter(filterStrategy));
         // mask scenario

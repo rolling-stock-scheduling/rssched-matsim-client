@@ -76,6 +76,9 @@ public class RsschedRequestConfigReader {
                             case "outputDirectory":
                                 builder.setOutputDirectory(valueCell.getStringCellValue());
                                 break;
+                            case "networkCrs":
+                                builder.setNetworkCrs(valueCell.getStringCellValue());
+                                break;
                             case "sampleSize":
                                 builder.config.getGlobal().setSampleSize(valueCell.getNumericCellValue());
                                 break;
