@@ -28,6 +28,7 @@ class RsschedRequestConfigReaderIT {
         assertEquals("run_1", config.getRunId());
         assertEquals("input/folder/path", config.getInputDirectory());
         assertEquals("output/folder/path", config.getOutputDirectory());
+        assertEquals("EPSG:25832", config.getNetworkCrs());
 
         // global settings
         assertEquals(0.1, config.getGlobal().getSampleSize());

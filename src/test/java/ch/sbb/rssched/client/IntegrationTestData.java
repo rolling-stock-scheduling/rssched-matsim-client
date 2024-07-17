@@ -20,7 +20,7 @@ import java.util.Set;
 public class IntegrationTestData {
 
     private static final String BASE_URL = "https://svn.vsp.tu-berlin.de/repos/public-svn/matsim/scenarios/countries/de/kelheim/kelheim-v3.0/output/25pct/";
-    private static final String[] FILE_NAMES = {"kelheim-v3.0-25pct.output_events.xml.gz", "kelheim-v3.0-25pct.output_network.xml.gz", "kelheim-v3.0-25pct.output_transitSchedule.xml.gz", "kelheim-v3.0-25pct.output_transitVehicles.xml.gz", "kelheim-v3.0-25pct.output_config.xml"};
+    private static final String[] FILE_NAMES = {"kelheim-v3.0-25pct.output_events.xml.gz", "kelheim-v3.0-25pct.output_network.xml.gz", "kelheim-v3.0-25pct.output_transitSchedule.xml.gz", "kelheim-v3.0-25pct.output_transitVehicles.xml.gz"};
     private final boolean overwrite;
 
     private static void downloadFile(String url, String outputFilePath) throws IOException {
@@ -69,6 +69,7 @@ public class IntegrationTestData {
         public static final String INPUT_DIRECTORY = "integration-test/input/de/kelheim/kelheim-v3.0/25pct/";
         public static final String OUTPUT_DIRECTORY = "integration-test/output/de/kelheim/kelheim-v3.0/25pct/";
         public static final String ID = "kelheim-v3.0-25pct";
+        public static final String CRS = "EPSG:25832";
         public static final double SAMPLE_SIZE = 0.25;
         public static final Set<String> LOCATIONS_IN_KEHLHEIM = Set.of("short_10302.5", "regio_275062", "short_10302.6",
                 "regio_289114.2", "regio_289114.4", "regio_92976", "short_10302.3", "short_10302.4", "regio_275062.1",
